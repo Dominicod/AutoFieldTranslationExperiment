@@ -1,0 +1,8 @@
+
+@AutoFieldTranslationExperiment_HostAddress = http://localhost:5186
+
+GET {{AutoFieldTranslationExperiment_HostAddress}}/api/products
+Accept: application/json
+###
+GET {{AutoFieldTranslationExperiment_HostAddress}}/api/products/1
+Accept: application/json
