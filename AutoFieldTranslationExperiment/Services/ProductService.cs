@@ -30,7 +30,7 @@ internal sealed class ProductService(IApplicationDbContext context) : IProductSe
             .ToListAsync();
     }
 
-    public async Task<Product> CreateProductAsync(ProductCreate request)
+    public async Task<ProductGet> CreateProductAsync(ProductCreate request)
     {
         var product = new Product
         {
@@ -45,10 +45,10 @@ internal sealed class ProductService(IApplicationDbContext context) : IProductSe
         
         await context.Products.AddAsync(product);
         await context.SaveChangesAsync();
-        return product;
+        return product.MapToDto();
     }
 
-    public async Task<Product> UpdateProductAsync(ProductUpdate request)
+    public async Task<ProductGet> UpdateProductAsync(ProductUpdate request)
     {
         var product = await context.Products
             .Include(i => i.NameTranslations)
@@ -69,7 +69,7 @@ internal sealed class ProductService(IApplicationDbContext context) : IProductSe
         
         context.Products.Update(product);
         await context.SaveChangesAsync();
-        return product;
+        return product.MapToDto();
     }
 
     public async Task DeleteProductAsync(Guid id)
