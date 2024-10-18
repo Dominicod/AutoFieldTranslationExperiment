@@ -6,7 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace AutoFieldTranslationExperiment.Controllers;
 
 [ApiController]
-[Route("api/products")]
+[Area("api")]
+[Route("[area]/[controller]")]
 public class ProductController(IProductService productService) : ControllerBase
 {
     [HttpGet]

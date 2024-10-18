@@ -13,8 +13,10 @@ builder.Services.AddDbContext<IApplicationDbContext, ApplicationDbContext>(optio
 });
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ITranslationService, TranslationService>();
+builder.Services.AddControllers();
 
 var app = builder.Build();
 
+app.MapControllers();
 app.UseHttpsRedirection();
 app.Run();
