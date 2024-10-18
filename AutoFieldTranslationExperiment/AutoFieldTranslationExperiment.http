@@ -4,7 +4,7 @@
 GET {{AutoFieldTranslationExperiment_HostAddress}}/api/product
 Accept: application/json
 ###
-GET {{AutoFieldTranslationExperiment_HostAddress}}/api/product/1
+GET {{AutoFieldTranslationExperiment_HostAddress}}/api/product/7edad28b-cd3b-4301-6ae7-08dcefb989a5
 Accept: application/json
 ###
 POST {{AutoFieldTranslationExperiment_HostAddress}}/api/product
@@ -12,7 +12,7 @@ Content-Type: application/json
 Accept: application/json
 
 {
-  "name": "Product 1",
+  "name": "Product 1"
 }
 ###
 PUT {{AutoFieldTranslationExperiment_HostAddress}}/api/product/1

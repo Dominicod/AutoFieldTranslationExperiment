@@ -13,12 +13,11 @@ internal sealed class ProductService(IApplicationDbContext context) : IProductSe
         var product = await context.Products
             .Include(i => i.NameTranslations)
             .AsNoTracking()
-            .Select(i => i.MapToDto())
             .FirstOrDefaultAsync(i => i.Id == id);
         
         Guard.Against.NotFound("Product", product, nameof(product));
         
-        return product;
+        return product.MapToDto();
     }
 
     public async Task<IEnumerable<ProductDto>> GetProductsAsync()
