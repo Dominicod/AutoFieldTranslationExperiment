@@ -58,4 +58,20 @@ public class ProductController(IProductService productService) : ControllerBase
 
         return Results.NoContent();
     }
+    
+    [HttpDelete]
+    [Route("{id:guid}")]
+    public async Task<IResult> Delete(Guid id)
+    {
+        try
+        {
+            await productService.DeleteProductAsync(id);
+        }
+        catch (NotFoundException)
+        {
+            return Results.NotFound();
+        }
+
+        return Results.NoContent();
+    }
 }
