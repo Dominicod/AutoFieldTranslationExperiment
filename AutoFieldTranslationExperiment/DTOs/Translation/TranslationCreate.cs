@@ -1,9 +1,7 @@
 namespace AutoFieldTranslationExperiment.DTOs.Translation;
 
-public sealed record TranslationGet
+public sealed record TranslationCreate
 {
-    public Guid Id { get; init; }
-    
     public string LanguageCode { get; init; } = string.Empty;
     
     public string Value { get; init; } = string.Empty;

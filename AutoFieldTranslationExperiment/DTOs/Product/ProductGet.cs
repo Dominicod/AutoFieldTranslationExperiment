@@ -1,10 +1,12 @@
+using AutoFieldTranslationExperiment.DTOs.Translation;
+
 namespace AutoFieldTranslationExperiment.DTOs.Product;
 
 public sealed record ProductGet
 {
-    public Guid Id { get; set; }
+    public Guid Id { get; init; }
 
-    public string? Name { get; set; } = string.Empty;
+    public string? Name { get; init; } = string.Empty;
     
-    public List<TranslationGet> NameTranslations { get; set; } = [];
+    public List<TranslationGet> NameTranslations { get; init; } = [];
 }

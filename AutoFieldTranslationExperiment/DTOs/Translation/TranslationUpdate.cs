@@ -1,6 +1,6 @@
 namespace AutoFieldTranslationExperiment.DTOs.Translation;
 
-public sealed record TranslationGet
+public sealed record TranslationUpdate
 {
     public Guid Id { get; init; }
     
