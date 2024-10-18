@@ -15,5 +15,10 @@ internal sealed class TranslationConfig : IEntityTypeConfiguration<Translation>
         builder.Property(t => t.Value)
             .HasMaxLength(1000)
             .IsRequired();
+
+        builder.HasOne(t => t.Product)
+            .WithMany(p => p.NameTranslations)
+            .HasForeignKey(t => t.ProductId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

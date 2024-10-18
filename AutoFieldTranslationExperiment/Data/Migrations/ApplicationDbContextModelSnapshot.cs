@@ -61,9 +61,12 @@ namespace AutoFieldTranslationExperiment.Data.Migrations
 
             modelBuilder.Entity("AutoFieldTranslationExperiment.Models.Translation", b =>
                 {
-                    b.HasOne("AutoFieldTranslationExperiment.Models.Product", null)
+                    b.HasOne("AutoFieldTranslationExperiment.Models.Product", "Product")
                         .WithMany("NameTranslations")
-                        .HasForeignKey("ProductId");
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("AutoFieldTranslationExperiment.Models.Product", b =>

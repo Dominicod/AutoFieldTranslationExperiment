@@ -38,7 +38,8 @@ namespace AutoFieldTranslationExperiment.Data.Migrations
                         name: "FK_Translations_Products_ProductId",
                         column: x => x.ProductId,
                         principalTable: "Products",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
