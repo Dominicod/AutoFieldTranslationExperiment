@@ -16,7 +16,10 @@ public sealed class Product : BaseEntity
                 .Where(i => i.LanguageCode == Thread.CurrentThread.CurrentCulture.Name)
                 .Select(i => i.Value)
                 .FirstOrDefault(),
-            NameTranslations = NameTranslations.Select(i => i.MapToDto()).ToList()
+            Translations = new ProductTranslations
+            {
+                Names = NameTranslations.Select(i => i.MapToDto()).ToList()
+            }
         };
     }
 }

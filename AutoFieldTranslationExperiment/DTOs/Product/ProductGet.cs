@@ -1,5 +1,3 @@
-using AutoFieldTranslationExperiment.DTOs.Translation;
-
 namespace AutoFieldTranslationExperiment.DTOs.Product;
 
 public sealed record ProductGet
@@ -8,5 +6,5 @@ public sealed record ProductGet
 
     public string? Name { get; init; } = string.Empty;
     
-    public List<TranslationGet> NameTranslations { get; init; } = [];
+    public ProductTranslations Translations { get; init; } = new();
 }
