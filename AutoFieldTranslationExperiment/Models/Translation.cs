@@ -18,4 +18,13 @@ public class Translation : BaseEntity
             Value = Value
         };
     }
+    
+    public Translation FromDto(TranslationDto dto)
+    {
+        Id = dto.Id;
+        LanguageCode = dto.LanguageCode;
+        Value = dto.Value;
+        
+        return this;
+    }
 }

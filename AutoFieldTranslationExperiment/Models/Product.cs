@@ -15,4 +15,12 @@ public sealed class Product : BaseEntity
             Names = NameTranslations.Select(i => i.MapToDto()).ToList()
         };
     }
+    
+    public Product FromDto(ProductDto dto)
+    {
+        Id = dto.Id;
+        NameTranslations = dto.Names.Select(i => new Translation().FromDto(i)).ToList();
+        
+        return this;
+    }
 }
