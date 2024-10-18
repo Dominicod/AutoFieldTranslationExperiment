@@ -3,6 +3,7 @@ using AutoFieldTranslationExperiment.Data;
 using AutoFieldTranslationExperiment.Middleware;
 using AutoFieldTranslationExperiment.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,6 +19,10 @@ builder.Host.UseSerilog((ctx, _, loggerConfiguration) =>
         .ReadFrom.Configuration(ctx.Configuration);
 });
 
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "AutoFieldTranslationExperiment", Version = "v1" });
+});
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddDbContext<IApplicationDbContext, ApplicationDbContext>(options =>
 {
@@ -33,6 +38,12 @@ builder.Services.AddControllers()
     });
 
 var app = builder.Build();
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
 app.UseSerilogRequestLogging();
 app.UseMiddleware<RequestInformationMiddleware>();
