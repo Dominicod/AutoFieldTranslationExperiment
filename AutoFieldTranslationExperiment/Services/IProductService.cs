@@ -1,17 +1,18 @@
 using AutoFieldTranslationExperiment.DTOs;
+using AutoFieldTranslationExperiment.DTOs.Product;
 using AutoFieldTranslationExperiment.Models;
 
 namespace AutoFieldTranslationExperiment.Services;
 
 public interface IProductService
 {
-    public Task<ProductDto> GetProductAsync(Guid id);
+    public Task<ProductGet> GetProductAsync(Guid id);
     
-    public Task<IEnumerable<ProductDto>> GetProductsAsync();
+    public Task<IEnumerable<ProductGet>> GetProductsAsync();
     
-    public Task<Product> CreateProductAsync(ProductDto product);
+    public Task<Product> CreateProductAsync(ProductCreate product);
     
-    public Task<Product> UpdateProductAsync(ProductDto product);
+    public Task<Product> UpdateProductAsync(ProductUpdate product);
     
     public Task DeleteProductAsync(Guid id);
 }

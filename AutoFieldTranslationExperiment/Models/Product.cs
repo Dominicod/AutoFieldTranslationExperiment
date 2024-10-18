@@ -1,4 +1,4 @@
-using AutoFieldTranslationExperiment.DTOs;
+using AutoFieldTranslationExperiment.DTOs.Product;
 using AutoFieldTranslationExperiment.Shared;
 
 namespace AutoFieldTranslationExperiment.Models;
@@ -7,20 +7,16 @@ public sealed class Product : BaseEntity
 {
     public List<Translation> NameTranslations { get; set; } = [];
     
-    public ProductDto MapToDto()
+    public ProductGet MapToDto()
     {
-        return new ProductDto
+        return new ProductGet
         {
             Id = Id,
-            Names = NameTranslations.Select(i => i.MapToDto()).ToList()
+            Name = NameTranslations
+                .Where(i => i.LanguageCode == Thread.CurrentThread.CurrentCulture.Name)
+                .Select(i => i.Value)
+                .FirstOrDefault(),
+            NameTranslations = NameTranslations.Select(i => i.MapToDto()).ToList()
         };
-    }
-    
-    public Product FromDto(ProductDto dto)
-    {
-        Id = dto.Id;
-        NameTranslations = dto.Names.Select(i => new Translation().FromDto(i)).ToList();
-        
-        return this;
     }
 }

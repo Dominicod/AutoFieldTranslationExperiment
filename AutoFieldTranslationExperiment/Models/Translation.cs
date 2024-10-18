@@ -9,22 +9,13 @@ public class Translation : BaseEntity
     
     public string Value { get; set; } = string.Empty;
     
-    public TranslationDto MapToDto()
+    public TranslationGet MapToDto()
     {
-        return new TranslationDto
+        return new TranslationGet
         {
             Id = Id,
             LanguageCode = LanguageCode,
             Value = Value
         };
-    }
-    
-    public Translation FromDto(TranslationDto dto)
-    {
-        Id = dto.Id;
-        LanguageCode = dto.LanguageCode;
-        Value = dto.Value;
-        
-        return this;
     }
 }

@@ -1,6 +1,7 @@
 using Ardalis.GuardClauses;
 using AutoFieldTranslationExperiment.Data;
 using AutoFieldTranslationExperiment.DTOs;
+using AutoFieldTranslationExperiment.DTOs.Product;
 using AutoFieldTranslationExperiment.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,7 +9,7 @@ namespace AutoFieldTranslationExperiment.Services;
 
 internal sealed class ProductService(IApplicationDbContext context) : IProductService
 {
-    public async Task<ProductDto> GetProductAsync(Guid id)
+    public async Task<ProductGet> GetProductAsync(Guid id)
     {
         var product = await context.Products
             .Include(i => i.NameTranslations)
@@ -20,7 +21,7 @@ internal sealed class ProductService(IApplicationDbContext context) : IProductSe
         return product.MapToDto();
     }
 
-    public async Task<IEnumerable<ProductDto>> GetProductsAsync()
+    public async Task<IEnumerable<ProductGet>> GetProductsAsync()
     {
         return await context.Products
             .Include(i => i.NameTranslations)
@@ -29,17 +30,22 @@ internal sealed class ProductService(IApplicationDbContext context) : IProductSe
             .ToListAsync();
     }
 
-    public async Task<Product> CreateProductAsync(ProductDto request)
+    public async Task<Product> CreateProductAsync(ProductCreate request)
     {
-        var product = new Product().FromDto(request);
+        var product = new Product();
+        
         await context.Products.AddAsync(product);
         await context.SaveChangesAsync();
         return product;
     }
 
-    public async Task<Product> UpdateProductAsync(ProductDto request)
+    public async Task<Product> UpdateProductAsync(ProductUpdate request)
     {
-        var product = new Product().FromDto(request);
+        var product = new Product
+        {
+            Id = request.Id,
+        };
+        
         context.Products.Update(product);
         await context.SaveChangesAsync();
         return product;

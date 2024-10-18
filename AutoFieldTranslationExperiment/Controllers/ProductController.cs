@@ -1,5 +1,6 @@
 using Ardalis.GuardClauses;
 using AutoFieldTranslationExperiment.DTOs;
+using AutoFieldTranslationExperiment.DTOs.Product;
 using AutoFieldTranslationExperiment.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -36,7 +37,7 @@ public class ProductController(IProductService productService) : ControllerBase
     
     [HttpPost]
     [Route("")]
-    public async Task<IResult> Create(ProductDto request)
+    public async Task<IResult> Create(ProductCreate request)
     {
         var product = await productService.CreateProductAsync(request);
         
@@ -45,7 +46,7 @@ public class ProductController(IProductService productService) : ControllerBase
     
     [HttpPut]
     [Route("")]
-    public async Task<IResult> Update(ProductDto request)
+    public async Task<IResult> Update(ProductUpdate request)
     {
         try
         {
