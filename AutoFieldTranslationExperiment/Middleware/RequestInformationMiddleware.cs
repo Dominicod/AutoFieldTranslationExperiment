@@ -11,7 +11,14 @@ internal sealed class RequestInformationMiddleware(ILogger<RequestInformationMid
         
         // Fetch the first value from language header, if not found, default to en-US
         // The first should in theory be the default language of the browser
-        var preferredBrowserLanguage = acceptLanguageHeader.ToString().Split(',').FirstOrDefault() ?? "en-US";
+        var preferredBrowserLanguage = acceptLanguageHeader.ToString().Split(',').FirstOrDefault();
+        
+        if (string.IsNullOrWhiteSpace(preferredBrowserLanguage))
+        {
+            logger.LogWarning("No language found in Accept-Language header, defaulting to en-US");
+            preferredBrowserLanguage = "en-US";
+        }
+        
         Thread.CurrentThread.CurrentCulture = new CultureInfo(preferredBrowserLanguage);
         
         logger.LogInformation("Request: {Method} {Path} Language: {LanguageCode}", context.Request.Method, context.Request.Path, preferredBrowserLanguage);
