@@ -5,20 +5,20 @@ namespace AutoFieldTranslationExperiment.Models;
 
 public sealed class Product : BaseEntity
 {
-    public List<Translation> NameTranslations { get; set; } = [];
+    public List<Translation> Translations { get; set; } = [];
     
     public ProductGet MapToDto()
     {
         return new ProductGet
         {
             Id = Id,
-            Name = NameTranslations
+            Name = Translations
                 .Where(i => i.LanguageCode == Thread.CurrentThread.CurrentCulture.Name)
                 .Select(i => i.Value)
                 .FirstOrDefault(),
             Translations = new ProductTranslations
             {
-                Names = NameTranslations.Select(i => i.MapToDto()).ToList()
+                Names = Translations.Select(i => i.MapToDto()).ToList()
             }
         };
     }

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AutoFieldTranslationExperiment.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241018221103_Initial")]
+    [Migration("20241020234905_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -42,6 +42,11 @@ namespace AutoFieldTranslationExperiment.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("Key")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
                     b.Property<string>("LanguageCode")
                         .IsRequired()
                         .HasMaxLength(10)
@@ -51,7 +56,6 @@ namespace AutoFieldTranslationExperiment.Data.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Value")
-                        .IsRequired()
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
 
@@ -64,17 +68,15 @@ namespace AutoFieldTranslationExperiment.Data.Migrations
 
             modelBuilder.Entity("AutoFieldTranslationExperiment.Models.Translation", b =>
                 {
-                    b.HasOne("AutoFieldTranslationExperiment.Models.Product", "Product")
-                        .WithMany("NameTranslations")
+                    b.HasOne("AutoFieldTranslationExperiment.Models.Product", null)
+                        .WithMany("Translations")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade);
-
-                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("AutoFieldTranslationExperiment.Models.Product", b =>
                 {
-                    b.Navigation("NameTranslations");
+                    b.Navigation("Translations");
                 });
 #pragma warning restore 612, 618
         }

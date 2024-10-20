@@ -1,6 +1,5 @@
 using Ardalis.GuardClauses;
 using AutoFieldTranslationExperiment.Data;
-using AutoFieldTranslationExperiment.DTOs;
 using AutoFieldTranslationExperiment.DTOs.Product;
 using AutoFieldTranslationExperiment.Models;
 using Microsoft.EntityFrameworkCore;
@@ -12,7 +11,7 @@ internal sealed class ProductService(IApplicationDbContext context) : IProductSe
     public async Task<ProductGet> GetProductAsync(Guid id)
     {
         var product = await context.Products
-            .Include(i => i.NameTranslations)
+            .Include(i => i.Translations)
             .AsNoTracking()
             .FirstOrDefaultAsync(i => i.Id == id);
         
@@ -24,7 +23,7 @@ internal sealed class ProductService(IApplicationDbContext context) : IProductSe
     public async Task<IEnumerable<ProductGet>> GetProductsAsync()
     {
         return await context.Products
-            .Include(i => i.NameTranslations)
+            .Include(i => i.Translations)
             .AsNoTracking()
             .Select(i => i.MapToDto())
             .ToListAsync();
@@ -34,7 +33,7 @@ internal sealed class ProductService(IApplicationDbContext context) : IProductSe
     {
         var product = new Product
         {
-            NameTranslations = [
+            Translations = [
                 new Translation
                 {
                     LanguageCode = Thread.CurrentThread.CurrentCulture.Name,
@@ -51,17 +50,17 @@ internal sealed class ProductService(IApplicationDbContext context) : IProductSe
     public async Task<ProductGet> UpdateProductAsync(ProductUpdate request)
     {
         var product = await context.Products
-            .Include(i => i.NameTranslations)
+            .Include(i => i.Translations)
             .FirstOrDefaultAsync(i => i.Id == request.Id);
         
         Guard.Against.NotFound("Product", product, nameof(product));
         
-        var currentTranslation = product.NameTranslations.FirstOrDefault(i => i.LanguageCode == Thread.CurrentThread.CurrentCulture.Name);
+        var currentTranslation = product.Translations.FirstOrDefault(i => i.LanguageCode == Thread.CurrentThread.CurrentCulture.Name);
         
         if (currentTranslation is not null)
             currentTranslation.Value = request.Name;
         else
-            product.NameTranslations.Add(new Translation
+            product.Translations.Add(new Translation
             {
                 LanguageCode = Thread.CurrentThread.CurrentCulture.Name,
                 Value = request.Name

@@ -28,7 +28,8 @@ namespace AutoFieldTranslationExperiment.Data.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     LanguageCode = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
-                    Value = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
+                    Key = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
+                    Value = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
                     ProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>

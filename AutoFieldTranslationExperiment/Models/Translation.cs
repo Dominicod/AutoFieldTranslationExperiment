@@ -8,11 +8,9 @@ public class Translation : BaseEntity
 {
     public string LanguageCode { get; set; } = string.Empty;
     
-    public string Value { get; set; } = string.Empty;
+    public string Key { get; set; } = string.Empty;
     
-    public Guid? ProductId { get; set; }
-    
-    public Product? Product { get; set; }
+    public string? Value { get; set; }
     
     public TranslationGet MapToDto()
     {
@@ -20,7 +18,8 @@ public class Translation : BaseEntity
         {
             Id = Id,
             LanguageCode = LanguageCode,
-            Value = Value
+            Value = Value,
+            Key = Key,
         };
     }
 }
