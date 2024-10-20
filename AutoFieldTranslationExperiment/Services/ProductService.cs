@@ -37,7 +37,8 @@ internal sealed class ProductService(IApplicationDbContext context) : IProductSe
                 new Translation
                 {
                     LanguageCode = Thread.CurrentThread.CurrentCulture.Name,
-                    Value = request.Name
+                    Value = request.Name,
+                    Key = nameof(request.Name)
                 }
             ]
         };
@@ -55,7 +56,9 @@ internal sealed class ProductService(IApplicationDbContext context) : IProductSe
         
         Guard.Against.NotFound("Product", product, nameof(product));
         
-        var currentTranslation = product.Translations.FirstOrDefault(i => i.LanguageCode == Thread.CurrentThread.CurrentCulture.Name);
+        var currentTranslation = product.Translations
+            .Where(i => i.Key == nameof(request.Name))
+            .FirstOrDefault(i => i.LanguageCode == Thread.CurrentThread.CurrentCulture.Name);
         
         if (currentTranslation is not null)
             currentTranslation.Value = request.Name;
@@ -63,7 +66,8 @@ internal sealed class ProductService(IApplicationDbContext context) : IProductSe
             product.Translations.Add(new Translation
             {
                 LanguageCode = Thread.CurrentThread.CurrentCulture.Name,
-                Value = request.Name
+                Value = request.Name,
+                Key = nameof(request.Name)
             });
         
         context.Products.Update(product);

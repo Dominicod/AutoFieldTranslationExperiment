@@ -9,16 +9,18 @@ public sealed class Product : BaseEntity
     
     public ProductGet MapToDto()
     {
+        var names = Translations
+            .Where(i => i.Key == nameof(ProductGet.Name))
+            .Select(i => i.MapToDto())
+            .ToList();
+        
         return new ProductGet
         {
             Id = Id,
-            Name = Translations
-                .Where(i => i.LanguageCode == Thread.CurrentThread.CurrentCulture.Name)
-                .Select(i => i.Value)
-                .FirstOrDefault(),
+            Name = names.FirstOrDefault(i => i.LanguageCode == Thread.CurrentThread.CurrentCulture.Name)?.Value,
             Translations = new ProductTranslations
             {
-                Names = Translations.Select(i => i.MapToDto()).ToList()
+                Names = names
             }
         };
     }

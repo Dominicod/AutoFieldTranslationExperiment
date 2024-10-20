@@ -6,9 +6,9 @@ namespace AutoFieldTranslationExperiment.Models;
 
 public class Translation : BaseEntity
 {
-    public string LanguageCode { get; set; } = string.Empty;
+    public required string LanguageCode { get; set; } = string.Empty;
     
-    public string Key { get; set; } = string.Empty;
+    public required string Key { get; set; } = string.Empty;
     
     public string? Value { get; set; }
     
