@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using AutoFieldTranslationExperiment.Data;
+using AutoFieldTranslationExperiment.Exceptions;
 using AutoFieldTranslationExperiment.Middleware;
 using AutoFieldTranslationExperiment.Services;
 using Microsoft.EntityFrameworkCore;
@@ -31,6 +32,7 @@ builder.Services.AddDbContext<IApplicationDbContext, ApplicationDbContext>(optio
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ILanguageService, LanguageService>();
 builder.Services.AddScoped<RequestInformationMiddleware>();
+builder.Services.AddExceptionHandler<ExceptionHandler>();
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
@@ -49,5 +51,6 @@ app.UseSerilogRequestLogging();
 app.UseMiddleware<RequestInformationMiddleware>();
 app.MapControllers();
 app.UseHttpsRedirection();
+app.UseExceptionHandler(_ => { });
 app.MapGet("/api/health", () => "OK");
 app.Run();

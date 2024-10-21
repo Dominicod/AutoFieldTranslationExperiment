@@ -1,4 +1,6 @@
 using System.Globalization;
+using Ardalis.GuardClauses;
+using AutoFieldTranslationExperiment.Services;
 
 namespace AutoFieldTranslationExperiment.Middleware;
 
@@ -17,6 +19,15 @@ internal sealed class RequestInformationMiddleware(ILogger<RequestInformationMid
         {
             logger.LogWarning("No language found in Accept-Language header, defaulting to en-US");
             preferredBrowserLanguage = "en-US";
+        }
+        
+        var languageService = context.RequestServices.GetRequiredService<ILanguageService>();
+        var languageExists = await languageService.LanguageExistsAsync(preferredBrowserLanguage);
+        
+        if (!languageExists)
+        {
+            logger.LogError("Language {LanguageCode} not found in database", preferredBrowserLanguage);
+            throw new NotFoundException("Language", nameof(preferredBrowserLanguage));
         }
         
         Thread.CurrentThread.CurrentCulture = new CultureInfo(preferredBrowserLanguage);
