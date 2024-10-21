@@ -31,6 +31,7 @@ builder.Services.AddDbContext<IApplicationDbContext, ApplicationDbContext>(optio
 });
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ILanguageService, LanguageService>();
+builder.Services.AddScoped<ITranslationService, TranslationService>();
 builder.Services.AddScoped<RequestInformationMiddleware>();
 builder.Services.AddExceptionHandler<ExceptionHandler>();
 builder.Services.AddControllers()
