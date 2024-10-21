@@ -1,5 +1,6 @@
 namespace AutoFieldTranslationExperiment.Services;
 
-public interface ITranslationService
+public class LanguageService : ILanguageService
 {
+    
 }

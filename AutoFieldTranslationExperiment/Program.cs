@@ -29,7 +29,7 @@ builder.Services.AddDbContext<IApplicationDbContext, ApplicationDbContext>(optio
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 builder.Services.AddScoped<IProductService, ProductService>();
-builder.Services.AddScoped<ITranslationService, TranslationService>();
+builder.Services.AddScoped<ILanguageService, LanguageService>();
 builder.Services.AddScoped<RequestInformationMiddleware>();
 builder.Services.AddControllers()
     .AddJsonOptions(options =>

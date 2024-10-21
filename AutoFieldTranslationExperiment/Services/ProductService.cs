@@ -31,12 +31,18 @@ internal sealed class ProductService(IApplicationDbContext context) : IProductSe
 
     public async Task<ProductGet> CreateProductAsync(ProductCreate request)
     {
+        var language = await context.Languages
+            .AsNoTracking()
+            .FirstOrDefaultAsync(i => i.Code == Thread.CurrentThread.CurrentCulture.Name);
+        
+        Guard.Against.NotFound("Language", language, nameof(language));
+        
         var product = new Product
         {
             Translations = [
                 new Translation
                 {
-                    LanguageCode = Thread.CurrentThread.CurrentCulture.Name,
+                    LanguageId = language.Id,
                     Value = request.Name,
                     Key = nameof(request.Name)
                 }
@@ -52,23 +58,33 @@ internal sealed class ProductService(IApplicationDbContext context) : IProductSe
     {
         var product = await context.Products
             .Include(i => i.Translations)
+                .ThenInclude(i => i.Language)
             .FirstOrDefaultAsync(i => i.Id == request.Id);
         
         Guard.Against.NotFound("Product", product, nameof(product));
         
         var currentTranslation = product.Translations
             .Where(i => i.Key == nameof(request.Name))
-            .FirstOrDefault(i => i.LanguageCode == Thread.CurrentThread.CurrentCulture.Name);
+            .FirstOrDefault(i => i.Language.Code == Thread.CurrentThread.CurrentCulture.Name);
         
         if (currentTranslation is not null)
             currentTranslation.Value = request.Name;
         else
+        {
+            var language = await context.Languages
+                .AsNoTracking()
+                .FirstOrDefaultAsync(i => i.Code == Thread.CurrentThread.CurrentCulture.Name);
+            
+            Guard.Against.NotFound("Language", language, nameof(language));
+            
             product.Translations.Add(new Translation
             {
-                LanguageCode = Thread.CurrentThread.CurrentCulture.Name,
+                LanguageId = language.Id,
                 Value = request.Name,
                 Key = nameof(request.Name)
             });
+            
+        }
         
         context.Products.Update(product);
         await context.SaveChangesAsync();

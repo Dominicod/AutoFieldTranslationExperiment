@@ -1,5 +1,3 @@
-using Ardalis.GuardClauses;
-using AutoFieldTranslationExperiment.DTOs;
 using AutoFieldTranslationExperiment.DTOs.Product;
 using AutoFieldTranslationExperiment.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -16,7 +14,6 @@ public class ProductController(IProductService productService) : ControllerBase
     public async Task<IResult> GetAll()
     {
         var products = await productService.GetProductsAsync();
-
         return Results.Ok(products);
     }
     
@@ -24,15 +21,8 @@ public class ProductController(IProductService productService) : ControllerBase
     [Route("{id:guid}")]
     public async Task<IResult> Get(Guid id)
     {
-        try
-        {
-            var product = await productService.GetProductAsync(id);
-            return Results.Ok(product);
-        }
-        catch (NotFoundException)
-        {
-            return Results.NotFound();
-        }
+        var product = await productService.GetProductAsync(id);
+        return Results.Ok(product);
     }
     
     [HttpPost]
@@ -40,7 +30,6 @@ public class ProductController(IProductService productService) : ControllerBase
     public async Task<IResult> Create(ProductCreate request)
     {
         var product = await productService.CreateProductAsync(request);
-        
         return Results.Created($"/api/products/{product.Id}", product);
     }
     
@@ -48,15 +37,7 @@ public class ProductController(IProductService productService) : ControllerBase
     [Route("")]
     public async Task<IResult> Update(ProductUpdate request)
     {
-        try
-        {
-            await productService.UpdateProductAsync(request);
-        }
-        catch (NotFoundException)
-        {
-            return Results.NotFound();
-        }
-
+        await productService.UpdateProductAsync(request);
         return Results.NoContent();
     }
     
@@ -64,15 +45,7 @@ public class ProductController(IProductService productService) : ControllerBase
     [Route("{id:guid}")]
     public async Task<IResult> Delete(Guid id)
     {
-        try
-        {
-            await productService.DeleteProductAsync(id);
-        }
-        catch (NotFoundException)
-        {
-            return Results.NotFound();
-        }
-
+        await productService.DeleteProductAsync(id);
         return Results.NoContent();
     }
 }

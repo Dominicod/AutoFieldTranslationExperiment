@@ -10,6 +10,8 @@ internal sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext
     
     public DbSet<Translation> Translations => Set<Translation>();
     
+    public DbSet<Language> Languages => Set<Language>();
+    
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);

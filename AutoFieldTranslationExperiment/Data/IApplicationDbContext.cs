@@ -9,5 +9,7 @@ public interface IApplicationDbContext
     
     DbSet<Translation> Translations { get; }
     
+    DbSet<Language> Languages { get; }
+    
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }
