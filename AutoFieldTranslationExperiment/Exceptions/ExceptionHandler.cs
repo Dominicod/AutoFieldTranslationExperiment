@@ -1,4 +1,6 @@
+
 using Ardalis.GuardClauses;
+using FluentValidation;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,6 +11,7 @@ internal sealed class ExceptionHandler : IExceptionHandler
     private readonly Dictionary<Type, Func<HttpContext, Exception, Task>> _exceptionHandlers = new()
     {
         { typeof(NotFoundException), HandleNotFoundException },
+        { typeof(ValidationException), HandleValidationException }
     };
 
     public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception,
@@ -35,6 +38,20 @@ internal sealed class ExceptionHandler : IExceptionHandler
         });
 
         return true;
+    }
+    
+    private static async Task HandleValidationException(HttpContext httpContext, Exception ex)
+    {
+        var exception = (ValidationException)ex;
+
+        httpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
+
+        await httpContext.Response.WriteAsJsonAsync(new ValidationProblemDetails(exception.Errors
+            .ToDictionary(e => e.PropertyName, e => new[] { e.ErrorMessage }))
+        {
+            Status = StatusCodes.Status400BadRequest,
+            Type = "https://tools.ietf.org/html/rfc7231#section-6.5.1"
+        });
     }
 
     private static async Task HandleNotFoundException(HttpContext httpContext, Exception ex)

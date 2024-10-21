@@ -2,6 +2,7 @@ using Ardalis.GuardClauses;
 using AutoFieldTranslationExperiment.Data;
 using AutoFieldTranslationExperiment.DTOs.Product;
 using AutoFieldTranslationExperiment.Models;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
 namespace AutoFieldTranslationExperiment.Services;
@@ -10,6 +11,9 @@ internal sealed class ProductService(IApplicationDbContext context) : IProductSe
 {
     public async Task<ProductGet> GetProductAsync(Guid id)
     {
+        if (id == Guid.Empty)
+            throw new ValidationException("Product Id cannot be empty");
+        
         var product = await context.Products
             .Include(i => i.Translations)
             .AsNoTracking()
@@ -31,6 +35,9 @@ internal sealed class ProductService(IApplicationDbContext context) : IProductSe
 
     public async Task<ProductGet> CreateProductAsync(ProductCreate request)
     {
+        if (string.IsNullOrEmpty(request.Name))
+            throw new ValidationException("Product Name cannot be empty");
+        
         var language = await context.Languages
             .AsNoTracking()
             .FirstOrDefaultAsync(i => i.Code == Thread.CurrentThread.CurrentCulture.Name);
@@ -56,6 +63,12 @@ internal sealed class ProductService(IApplicationDbContext context) : IProductSe
 
     public async Task<ProductGet> UpdateProductAsync(ProductUpdate request)
     {
+        if (request.Id == Guid.Empty)
+            throw new ValidationException("Product Id cannot be empty");
+        
+        if (string.IsNullOrEmpty(request.Name))
+            throw new ValidationException("Product Name cannot be empty");
+        
         var product = await context.Products
             .Include(i => i.Translations)
                 .ThenInclude(i => i.Language)
@@ -93,6 +106,9 @@ internal sealed class ProductService(IApplicationDbContext context) : IProductSe
 
     public async Task DeleteProductAsync(Guid id)
     {
+        if (id == Guid.Empty)
+            throw new ValidationException("Product Id cannot be empty");
+        
         var product = await context.Products.FindAsync(id);
 
         Guard.Against.NotFound("Product", product, nameof(product));
