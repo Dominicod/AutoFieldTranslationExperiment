@@ -16,7 +16,7 @@ public class ProductController(IProductService productService) : ControllerBase
         var products = await productService.GetProductsAsync();
         return Results.Ok(products);
     }
-    
+
     [HttpGet]
     [Route("{id:guid}")]
     public async Task<IResult> Get(Guid id)
@@ -24,7 +24,7 @@ public class ProductController(IProductService productService) : ControllerBase
         var product = await productService.GetProductAsync(id);
         return Results.Ok(product);
     }
-    
+
     [HttpPost]
     [Route("")]
     public async Task<IResult> Create(ProductCreate request)
@@ -32,7 +32,7 @@ public class ProductController(IProductService productService) : ControllerBase
         var product = await productService.CreateProductAsync(request);
         return Results.Created($"/api/products/{product.Id}", product);
     }
-    
+
     [HttpPut]
     [Route("")]
     public async Task<IResult> Update(ProductUpdate request)
@@ -40,7 +40,7 @@ public class ProductController(IProductService productService) : ControllerBase
         await productService.UpdateProductAsync(request);
         return Results.NoContent();
     }
-    
+
     [HttpDelete]
     [Route("{id:guid}")]
     public async Task<IResult> Delete(Guid id)

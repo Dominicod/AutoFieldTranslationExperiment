@@ -1,10 +1,9 @@
-
 using Ardalis.GuardClauses;
 using FluentValidation;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AutoFieldTranslationExperiment.Exceptions;
+namespace AutoFieldTranslationExperiment.Infrastructure.Exceptions;
 
 internal sealed class ExceptionHandler : IExceptionHandler
 {
@@ -19,12 +18,13 @@ internal sealed class ExceptionHandler : IExceptionHandler
     {
         var exceptionType = exception.GetType();
 
-        if (!_exceptionHandlers.TryGetValue(exceptionType, out var handler)) return await HandleCatchAllException(httpContext, exception);
+        if (!_exceptionHandlers.TryGetValue(exceptionType, out var handler))
+            return await HandleCatchAllException(httpContext, exception);
 
         await handler.Invoke(httpContext, exception);
         return true;
     }
-    
+
     private static async Task<bool> HandleCatchAllException(HttpContext httpContext, Exception ex)
     {
         httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
@@ -39,7 +39,7 @@ internal sealed class ExceptionHandler : IExceptionHandler
 
         return true;
     }
-    
+
     private static async Task HandleValidationException(HttpContext httpContext, Exception ex)
     {
         var exception = (ValidationException)ex;

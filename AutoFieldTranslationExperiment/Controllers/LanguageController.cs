@@ -16,7 +16,7 @@ public class LanguageController(ILanguageService languageService) : ControllerBa
         var languages = await languageService.GetLanguagesAsync();
         return Results.Ok(languages);
     }
-    
+
     [HttpPost]
     [Route("")]
     public async Task<IResult> Add(LanguageCreate request)
@@ -24,7 +24,7 @@ public class LanguageController(ILanguageService languageService) : ControllerBa
         var language = await languageService.AddLanguageAsync(request);
         return Results.Created(string.Empty, language);
     }
-    
+
     [HttpDelete]
     [Route("{id:guid}")]
     public async Task<IResult> Remove(Guid id)

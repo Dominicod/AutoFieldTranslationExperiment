@@ -2,7 +2,7 @@ using AutoFieldTranslationExperiment.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace AutoFieldTranslationExperiment.Data.Configurations;
+namespace AutoFieldTranslationExperiment.Infrastructure.Data.Configurations;
 
 internal sealed class TranslationConfig : IEntityTypeConfiguration<Translation>
 {

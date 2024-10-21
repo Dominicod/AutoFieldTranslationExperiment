@@ -1,6 +1,6 @@
 using Ardalis.GuardClauses;
-using AutoFieldTranslationExperiment.Data;
 using AutoFieldTranslationExperiment.DTOs.Language;
+using AutoFieldTranslationExperiment.Infrastructure.Data;
 using AutoFieldTranslationExperiment.Models;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
@@ -20,7 +20,7 @@ public class LanguageService(IApplicationDbContext context) : ILanguageService
     {
         if (string.IsNullOrEmpty(languageCode))
             throw new ValidationException("Language code cannot be empty");
-        
+
         return await context.Languages.AnyAsync(l => l.Code == languageCode);
     }
 
@@ -28,15 +28,15 @@ public class LanguageService(IApplicationDbContext context) : ILanguageService
     {
         if (string.IsNullOrEmpty(request.Code))
             throw new ValidationException("Language code cannot be empty");
-            
+
         var language = new Language
         {
             Code = request.Code
         };
-        
+
         await context.Languages.AddAsync(language);
         await context.SaveChangesAsync();
-        
+
         return language;
     }
 
@@ -44,11 +44,11 @@ public class LanguageService(IApplicationDbContext context) : ILanguageService
     {
         if (id == Guid.Empty)
             throw new ValidationException("Language Id cannot be empty");
-        
+
         var language = await context.Languages.FindAsync(id);
 
         Guard.Against.NotFound("Language", language, nameof(language));
-        
+
         context.Languages.Remove(language);
         await context.SaveChangesAsync();
     }

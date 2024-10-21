@@ -1,7 +1,7 @@
 using System.Text.Json.Serialization;
-using AutoFieldTranslationExperiment.Data;
-using AutoFieldTranslationExperiment.Exceptions;
-using AutoFieldTranslationExperiment.Middleware;
+using AutoFieldTranslationExperiment.Infrastructure.Data;
+using AutoFieldTranslationExperiment.Infrastructure.Exceptions;
+using AutoFieldTranslationExperiment.Infrastructure.Middleware;
 using AutoFieldTranslationExperiment.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -9,7 +9,7 @@ using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Configuration.AddJsonFile("secrets.json", optional: false, reloadOnChange: true);
+builder.Configuration.AddJsonFile("secrets.json", false, true);
 
 builder.Host.UseSerilog((ctx, _, loggerConfiguration) =>
 {
@@ -34,10 +34,7 @@ builder.Services.AddScoped<ILanguageService, LanguageService>();
 builder.Services.AddScoped<RequestInformationMiddleware>();
 builder.Services.AddExceptionHandler<ExceptionHandler>();
 builder.Services.AddControllers()
-    .AddJsonOptions(options =>
-    {
-        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
-    });
+    .AddJsonOptions(options => { options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles; });
 
 var app = builder.Build();
 
