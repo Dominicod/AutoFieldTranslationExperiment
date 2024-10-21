@@ -1,3 +1,3 @@
 namespace AutoFieldTranslationExperiment.DTOs.Language;
 
-public sealed record LanguageGet(Guid Id, string Code);
+public sealed record LanguageCreate(string Code);

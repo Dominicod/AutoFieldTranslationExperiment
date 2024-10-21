@@ -1,5 +1,6 @@
 using Ardalis.GuardClauses;
 using AutoFieldTranslationExperiment.Data;
+using AutoFieldTranslationExperiment.DTOs.Language;
 using AutoFieldTranslationExperiment.Models;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
@@ -8,6 +9,13 @@ namespace AutoFieldTranslationExperiment.Services;
 
 public class LanguageService(IApplicationDbContext context) : ILanguageService
 {
+    public async Task<IEnumerable<LanguageGet>> GetLanguagesAsync()
+    {
+        return await context.Languages
+            .Select(i => i.MapToDto())
+            .ToListAsync();
+    }
+
     public async Task<bool> LanguageExistsAsync(string languageCode)
     {
         if (string.IsNullOrEmpty(languageCode))
@@ -16,14 +24,14 @@ public class LanguageService(IApplicationDbContext context) : ILanguageService
         return await context.Languages.AnyAsync(l => l.Code == languageCode);
     }
 
-    public async Task<Language> AddLanguageAsync(string languageCode)
+    public async Task<Language> AddLanguageAsync(LanguageCreate request)
     {
-        if (string.IsNullOrEmpty(languageCode))
+        if (string.IsNullOrEmpty(request.Code))
             throw new ValidationException("Language code cannot be empty");
             
         var language = new Language
         {
-            Code = languageCode
+            Code = request.Code
         };
         
         await context.Languages.AddAsync(language);
