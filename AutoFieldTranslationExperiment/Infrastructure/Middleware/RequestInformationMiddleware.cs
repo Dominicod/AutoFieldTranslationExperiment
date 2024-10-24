@@ -22,19 +22,14 @@ internal sealed class RequestInformationMiddleware(ILogger<RequestInformationMid
         }
 
         var languageService = context.RequestServices.GetRequiredService<ILanguageService>();
-        var languageExists = await languageService.LanguageExistsAsync(preferredBrowserLanguage);
+        languageService.CurrentBrowserLanguage = await languageService.GetLanguageByCode(preferredBrowserLanguage);
 
-        if (!languageExists)
-        {
-            logger.LogError("Language {LanguageCode} not found in database", preferredBrowserLanguage);
-            throw new NotFoundException("Language", nameof(preferredBrowserLanguage));
-        }
-
-        Thread.CurrentThread.CurrentCulture = new CultureInfo(preferredBrowserLanguage);
+        Thread.CurrentThread.CurrentCulture = new CultureInfo(languageService.CurrentBrowserLanguage.Code);
 
         logger.LogInformation("Request: {Method} {Path} Language: {LanguageCode}", context.Request.Method,
             context.Request.Path, preferredBrowserLanguage);
 
         await next(context);
+        
     }
 }

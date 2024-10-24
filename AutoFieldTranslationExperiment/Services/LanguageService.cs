@@ -9,22 +9,31 @@ namespace AutoFieldTranslationExperiment.Services;
 
 public class LanguageService(IApplicationDbContext context) : ILanguageService
 {
+    public LanguageGet CurrentBrowserLanguage { get; set; } = null!;
+
     public async Task<IEnumerable<LanguageGet>> GetLanguagesAsync()
     {
         return await context.Languages
+            .AsNoTracking()
             .Select(i => i.MapToDto())
             .ToListAsync();
     }
 
-    public async Task<bool> LanguageExistsAsync(string languageCode)
+    public async Task<LanguageGet> GetLanguageByCode(string languageCode)
     {
         if (string.IsNullOrEmpty(languageCode))
             throw new ValidationException("Language code cannot be empty");
 
-        return await context.Languages.AnyAsync(l => l.Code == languageCode);
+        var language = await context.Languages
+            .AsNoTracking()
+            .FirstOrDefaultAsync(i => i.Code == languageCode);
+        
+        Guard.Against.NotFound("Language", language, nameof(language));
+        
+        return language.MapToDto();
     }
 
-    public async Task<Language> AddLanguageAsync(LanguageCreate request)
+    public async Task<LanguageGet> AddLanguageAsync(LanguageCreate request)
     {
         if (string.IsNullOrEmpty(request.Code))
             throw new ValidationException("Language code cannot be empty");
@@ -37,7 +46,7 @@ public class LanguageService(IApplicationDbContext context) : ILanguageService
         await context.Languages.AddAsync(language);
         await context.SaveChangesAsync();
 
-        return language;
+        return language.MapToDto();
     }
 
     public async Task RemoveLanguageAsync(Guid id)

@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AutoFieldTranslationExperiment.Services;
 
-internal sealed class ProductService(IApplicationDbContext context) : IProductService
+internal sealed class ProductService(IApplicationDbContext context, ITranslationService translationService, ILanguageService languageService) : IProductService
 {
     public async Task<ProductGet> GetProductAsync(Guid id)
     {
@@ -38,19 +38,13 @@ internal sealed class ProductService(IApplicationDbContext context) : IProductSe
         if (string.IsNullOrEmpty(request.Name))
             throw new ValidationException("Product Name cannot be empty");
 
-        var language = await context.Languages
-            .AsNoTracking()
-            .FirstOrDefaultAsync(i => i.Code == Thread.CurrentThread.CurrentCulture.Name);
-
-        Guard.Against.NotFound("Language", language, nameof(language));
-
         var product = new Product
         {
             Translations =
             [
                 new Translation
                 {
-                    LanguageId = language.Id,
+                    LanguageId = languageService.CurrentBrowserLanguage.Id,
                     Value = request.Name,
                     Key = nameof(request.Name)
                 }
@@ -59,6 +53,7 @@ internal sealed class ProductService(IApplicationDbContext context) : IProductSe
 
         await context.Products.AddAsync(product);
         await context.SaveChangesAsync();
+        
         return product.MapToDto();
     }
 
@@ -79,27 +74,17 @@ internal sealed class ProductService(IApplicationDbContext context) : IProductSe
 
         var currentTranslation = product.Translations
             .Where(i => i.Key == nameof(request.Name))
-            .FirstOrDefault(i => i.Language.Code == Thread.CurrentThread.CurrentCulture.Name);
+            .FirstOrDefault(i => i.Language.Id == languageService.CurrentBrowserLanguage.Id);
 
         if (currentTranslation is not null)
-        {
             currentTranslation.Value = request.Name;
-        }
         else
-        {
-            var language = await context.Languages
-                .AsNoTracking()
-                .FirstOrDefaultAsync(i => i.Code == Thread.CurrentThread.CurrentCulture.Name);
-
-            Guard.Against.NotFound("Language", language, nameof(language));
-
             product.Translations.Add(new Translation
             {
-                LanguageId = language.Id,
+                LanguageId = languageService.CurrentBrowserLanguage.Id,
                 Value = request.Name,
                 Key = nameof(request.Name)
             });
-        }
 
         context.Products.Update(product);
         await context.SaveChangesAsync();

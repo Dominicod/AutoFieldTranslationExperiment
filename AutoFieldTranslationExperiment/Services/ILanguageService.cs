@@ -5,11 +5,13 @@ namespace AutoFieldTranslationExperiment.Services;
 
 public interface ILanguageService
 {
+    LanguageGet CurrentBrowserLanguage { get; set; }
+    
     Task<IEnumerable<LanguageGet>> GetLanguagesAsync();
 
-    Task<bool> LanguageExistsAsync(string languageCode);
+    Task<LanguageGet> GetLanguageByCode(string languageCode);
 
-    Task<Language> AddLanguageAsync(LanguageCreate request);
+    Task<LanguageGet> AddLanguageAsync(LanguageCreate request);
 
     Task RemoveLanguageAsync(Guid id);
 }

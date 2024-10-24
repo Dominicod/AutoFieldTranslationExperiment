@@ -8,5 +8,5 @@ public interface ITranslationService
 {
     public Task<IEnumerable<TranslationGetSupported>> GetSupportedLanguagesAsync();
     
-    public Task<IReadOnlyList<TranslatedTextItem>> BulkTranslateAsync(List<Translation> translations, Guid sourceLanguage, List<Guid> targetLanguages);
+    public Task<IReadOnlyList<TranslatedTextItem?>> TranslateAsync(List<Translation> translations, Guid sourceLanguage, List<Guid> targetLanguages);
 }

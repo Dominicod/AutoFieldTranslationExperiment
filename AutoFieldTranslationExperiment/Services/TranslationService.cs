@@ -1,6 +1,8 @@
 using Ardalis.GuardClauses;
+using AutoFieldTranslationExperiment.DTOs.Language;
 using AutoFieldTranslationExperiment.DTOs.Translation;
 using AutoFieldTranslationExperiment.Infrastructure.Data;
+using AutoFieldTranslationExperiment.Models;
 using Azure;
 using Azure.AI.Translation.Text;
 using FluentValidation;
@@ -13,10 +15,12 @@ public class TranslationService : ITranslationService
 {
     private readonly TextTranslationClient _client;
     private readonly IApplicationDbContext _context;
+    private readonly ILanguageService _languageService;
     
-    public TranslationService(IConfiguration configuration, IApplicationDbContext context)
+    public TranslationService(IConfiguration configuration, IApplicationDbContext context, ILanguageService languageService)
     {
         _context = context;
+        _languageService = languageService;
         var credential = new AzureKeyCredential(configuration["Keys:Azure:AIService"] ?? throw new InvalidOperationException("Azure AIService key not found"));
         _client = new TextTranslationClient(credential);
     }
@@ -28,17 +32,28 @@ public class TranslationService : ITranslationService
         return languages.Select(l => new TranslationGetSupported(l.Key, l.Value.NativeName, l.Value.Name));
     }
 
-    public async Task<IReadOnlyList<TranslatedTextItem>> BulkTranslateAsync(List<Translation> translations, Guid sourceLanguage, List<Guid> targetLanguages)
+    public async Task<IReadOnlyList<TranslatedTextItem?>> TranslateAsync(List<Translation> translations, Guid sourceLanguage, List<Guid> targetLanguages)
     {
-        var source = await _context.Languages
-            .AsNoTracking()
-            .FirstOrDefaultAsync(l => l.Id == sourceLanguage);
+        LanguageGet source;
+        
+        if (sourceLanguage == _languageService.CurrentBrowserLanguage.Id)
+            source = _languageService.CurrentBrowserLanguage;
+        else
+        {
+            var language = await _context.Languages
+                .AsNoTracking()
+                .FirstOrDefaultAsync(l => l.Id == sourceLanguage);
+            
+            Guard.Against.NotFound("Source Language", language, nameof(source));
+            
+            source = language.MapToDto();
+        }
+        
         var targets = await _context.Languages
             .AsNoTracking()
             .Where(l => targetLanguages.Contains(l.Id))
             .ToListAsync();
-
-        Guard.Against.NotFound("Source Language", source, nameof(source));
+        
         if (targets.Count != targetLanguages.Count)
         {
             var missing = targetLanguages.Except(targets.Select(t => t.Id));
