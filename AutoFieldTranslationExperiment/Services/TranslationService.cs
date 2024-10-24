@@ -1,65 +1,57 @@
+using Ardalis.GuardClauses;
 using AutoFieldTranslationExperiment.DTOs.Translation;
+using AutoFieldTranslationExperiment.Infrastructure.Data;
 using Azure;
 using Azure.AI.Translation.Text;
+using FluentValidation;
+using Microsoft.EntityFrameworkCore;
+using Translation = AutoFieldTranslationExperiment.Models.Translation;
 
 namespace AutoFieldTranslationExperiment.Services;
 
 public class TranslationService : ITranslationService
 {
     private readonly TextTranslationClient _client;
+    private readonly IApplicationDbContext _context;
     
-    public TranslationService(IConfiguration configuration)
+    public TranslationService(IConfiguration configuration, IApplicationDbContext context)
     {
+        _context = context;
         var credential = new AzureKeyCredential(configuration["Keys:Azure:AIService"] ?? throw new InvalidOperationException("Azure AIService key not found"));
         _client = new TextTranslationClient(credential);
     }
 
     public async Task<IEnumerable<TranslationGetSupported>> GetSupportedLanguagesAsync()
     {
-        var languagesRes = await _client.GetLanguagesAsync();
+        var languagesRes = await _client.GetLanguagesAsync(scope: "translation");
         var languages = languagesRes.Value.Translation;
         return languages.Select(l => new TranslationGetSupported(l.Key, l.Value.NativeName, l.Value.Name));
     }
 
-    public Task BulkTranslateAsync(Guid sourceLanguage, Guid targetLanguage)
+    public async Task<IReadOnlyList<TranslatedTextItem>> BulkTranslateAsync(List<Translation> translations, Guid sourceLanguage, List<Guid> targetLanguages)
     {
-        throw new NotImplementedException();
+        var source = await _context.Languages
+            .AsNoTracking()
+            .FirstOrDefaultAsync(l => l.Id == sourceLanguage);
+        var targets = await _context.Languages
+            .AsNoTracking()
+            .Where(l => targetLanguages.Contains(l.Id))
+            .ToListAsync();
+
+        Guard.Against.NotFound("Source Language", source, nameof(source));
+        if (targets.Count != targetLanguages.Count)
+        {
+            var missing = targetLanguages.Except(targets.Select(t => t.Id));
+            throw new NotFoundException("Language Targets", $"One or more target languages not found: {string.Join(", ", missing)}");
+        }
         
-        //// Choose target language
-        // Response<GetLanguagesResult> languagesResponse = await client.GetLanguagesAsync(scope:"translation").ConfigureAwait(false);
-        // GetLanguagesResult languages = languagesResponse.Value;
-        // Console.WriteLine($"{languages.Translation.Count} languages available.\n(See https://learn.microsoft.com/azure/ai-services/translator/language-support#translation)");
-        // Console.WriteLine("Enter a target language code for translation (for example, 'en'):");
-        // string targetLanguage = "xx";
-        // bool languageSupported = false;
-        // while (!languageSupported)
-        // {
-        //     targetLanguage = Console.ReadLine();
-        //     if (languages.Translation.ContainsKey(targetLanguage))
-        //     {
-        //         languageSupported = true;
-        //     }
-        //     else
-        //     {
-        //         Console.WriteLine($"{targetLanguage} is not a supported language.");
-        //     }
-        // 
-        // }
+        if (translations.Any(i => i.Language.Code != source.Code))
+            throw new ValidationException("Source language code does not match the language code of the translations");
         
-        //// Translate text
-        // string inputText = "";
-        // while (inputText.ToLower() != "quit")
-        // {
-        //     Console.WriteLine("Enter text to translate ('quit' to exit)");
-        //     inputText = Console.ReadLine();
-        //     if (inputText.ToLower() != "quit")
-        //     {
-        //         Response<IReadOnlyList<TranslatedTextItem>> translationResponse = await client.TranslateAsync(targetLanguage, inputText).ConfigureAwait(false);
-        //         IReadOnlyList<TranslatedTextItem> translations = translationResponse.Value;
-        //         TranslatedTextItem translation = translations[0];
-        //         string sourceLanguage = translation?.DetectedLanguage?.Language;
-        //         Console.WriteLine($"'{inputText}' translated from {sourceLanguage} to {translation?.Translations[0].To} as '{translation?.Translations?[0]?.Text}'.");
-        //     }
-        // } 
+        var response = await _client.TranslateAsync(
+            targetLanguages: targets.Select(t => t.Code), 
+            content: translations.Select(t => t.Value), 
+            sourceLanguage: source.Code);
+        return response.Value;
     }
 }
