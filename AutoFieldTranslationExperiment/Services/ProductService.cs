@@ -53,6 +53,8 @@ internal sealed class ProductService(IApplicationDbContext context, ITranslation
 
         await context.Products.AddAsync(product);
         await context.SaveChangesAsync();
+
+        await translationService.AddAlternateTranslationsAsync(product.Translations);
         
         return product.MapToDto();
     }
@@ -88,6 +90,9 @@ internal sealed class ProductService(IApplicationDbContext context, ITranslation
 
         context.Products.Update(product);
         await context.SaveChangesAsync();
+        
+        await translationService.AddAlternateTranslationsAsync(product.Translations);
+        
         return product.MapToDto();
     }
 

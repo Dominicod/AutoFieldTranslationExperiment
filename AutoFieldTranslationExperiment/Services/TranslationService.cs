@@ -32,31 +32,32 @@ public class TranslationService : ITranslationService
         return languages.Select(l => new TranslationGetSupported(l.Key, l.Value.NativeName, l.Value.Name));
     }
 
-    public async Task<IReadOnlyList<TranslatedTextItem?>> TranslateAsync(List<Translation> translations, Guid sourceLanguage, List<Guid> targetLanguages)
+    public async Task<IReadOnlyList<TranslatedTextItem?>> TranslateAsync(List<Translation> translations, Language sourceLanguage, List<Language> targetLanguages)
     {
         LanguageGet source;
         
-        if (sourceLanguage == _languageService.CurrentBrowserLanguage.Id)
+        if (sourceLanguage.Id == _languageService.CurrentBrowserLanguage.Id)
             source = _languageService.CurrentBrowserLanguage;
         else
         {
             var language = await _context.Languages
                 .AsNoTracking()
-                .FirstOrDefaultAsync(l => l.Id == sourceLanguage);
+                .FirstOrDefaultAsync(l => l.Id == sourceLanguage.Id);
             
             Guard.Against.NotFound("Source Language", language, nameof(source));
             
             source = language.MapToDto();
         }
         
+        var targetIds = targetLanguages.Select(t => t.Id);
         var targets = await _context.Languages
             .AsNoTracking()
-            .Where(l => targetLanguages.Contains(l.Id))
+            .Where(l => targetIds.Contains(l.Id))
             .ToListAsync();
         
         if (targets.Count != targetLanguages.Count)
         {
-            var missing = targetLanguages.Except(targets.Select(t => t.Id));
+            var missing = targetIds.Except(targets.Select(t => t.Id));
             throw new NotFoundException("Language Targets", $"One or more target languages not found: {string.Join(", ", missing)}");
         }
         
@@ -68,5 +69,32 @@ public class TranslationService : ITranslationService
             content: translations.Select(t => t.Value), 
             sourceLanguage: source.Code);
         return response.Value;
+    }
+
+    public async Task<bool> AddAlternateTranslationsAsync(List<Translation> translations)
+    {
+        if (translations.Any(i => i.Language.Id != _languageService.CurrentBrowserLanguage.Id))
+            throw new ValidationException("Alternate translations must be in the current browser language");
+
+        var source = new Language
+        {
+            Id = _languageService.CurrentBrowserLanguage.Id,
+            Code = _languageService.CurrentBrowserLanguage.Code
+        };
+        var targets = _languageService.SupportedLanguages.Select(i => new Language
+        {
+            Id = i.Id,
+            Code = i.Code
+        }).ToList();
+        
+        var translatedTexts = await TranslateAsync(
+            translations: translations, 
+            sourceLanguage: source, 
+            targetLanguages: targets);
+        
+        if (translatedTexts.Count != translations.Count)
+            throw new InvalidOperationException("Number of translations returned does not match the number of translations sent");
+
+        return true;
     }
 }
