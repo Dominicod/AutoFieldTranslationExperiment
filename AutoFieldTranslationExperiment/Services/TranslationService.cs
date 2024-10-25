@@ -3,6 +3,7 @@ using AutoFieldTranslationExperiment.DTOs.Language;
 using AutoFieldTranslationExperiment.DTOs.Translation;
 using AutoFieldTranslationExperiment.Infrastructure.Data;
 using AutoFieldTranslationExperiment.Models;
+using AutoFieldTranslationExperiment.Shared;
 using Azure;
 using Azure.AI.Translation.Text;
 using FluentValidation;
@@ -22,7 +23,8 @@ public class TranslationService : ITranslationService
         _context = context;
         _languageService = languageService;
         var credential = new AzureKeyCredential(configuration["Keys:Azure:AIService"] ?? throw new InvalidOperationException("Azure AIService key not found"));
-        _client = new TextTranslationClient(credential);
+        var region = configuration["AzureRegions:AIService"] ?? throw new InvalidOperationException("Azure AIService region not found");
+        _client = new TextTranslationClient(credential, region);
     }
 
     public async Task<IEnumerable<TranslationGetSupported>> GetSupportedLanguagesAsync()
@@ -32,7 +34,7 @@ public class TranslationService : ITranslationService
         return languages.Select(l => new TranslationGetSupported(l.Key, l.Value.NativeName, l.Value.Name));
     }
 
-    public async Task<IReadOnlyList<TranslatedTextItem?>> TranslateAsync(List<Translation> translations, Language sourceLanguage, List<Language> targetLanguages)
+    public async Task<List<Translation>> TranslateAsync(List<Translation> translations, Language sourceLanguage, List<Language> targetLanguages)
     {
         LanguageGet source;
         
@@ -67,13 +69,36 @@ public class TranslationService : ITranslationService
         var response = await _client.TranslateAsync(
             targetLanguages: targets.Select(t => t.Code), 
             content: translations.Select(t => t.Value), 
-            sourceLanguage: source.Code);
-        return response.Value;
+            sourceLanguage: source.Code,
+            textType: TextType.Plain,
+            allowFallback: false);
+        
+        var translatedTexts = new List<Translation>();
+
+        for (var i = 0; i < response.Value.Count; i++)
+        {
+            var newTranslation = response.Value[i];
+            var prevTranslation = translations[i];
+            
+            for (var j = 0; j < newTranslation.Translations.Count; j++)
+            {
+                var language = targetLanguages[j];
+                translatedTexts.Add(new Translation
+                {
+                    LanguageId = language.Id,
+                    Language = language,
+                    Value = newTranslation.Translations[j].Text,
+                    Key = prevTranslation.Key
+                });
+            }
+        }
+        
+        return translatedTexts;
     }
 
-    public async Task<bool> AddAlternateTranslationsAsync(List<Translation> translations)
+    public async Task<bool> AddAlternateTranslationsAsync(TranslatableEntity entity, List<Translation> translations)
     {
-        if (translations.Any(i => i.Language.Id != _languageService.CurrentBrowserLanguage.Id))
+        if (translations.Any(i => i.LanguageId != _languageService.CurrentBrowserLanguage.Id))
             throw new ValidationException("Alternate translations must be in the current browser language");
 
         var source = new Language
@@ -81,11 +106,16 @@ public class TranslationService : ITranslationService
             Id = _languageService.CurrentBrowserLanguage.Id,
             Code = _languageService.CurrentBrowserLanguage.Code
         };
-        var targets = _languageService.SupportedLanguages.Select(i => new Language
-        {
-            Id = i.Id,
-            Code = i.Code
-        }).ToList();
+        var targets = _languageService.SupportedLanguages
+            .Where(i => i.Id != source.Id)
+            .Select(i => new Language
+            {
+                Id = i.Id,
+                Code = i.Code
+            }).ToList();
+
+        if (targets.Count is 0)
+            return true;
         
         var translatedTexts = await TranslateAsync(
             translations: translations, 
@@ -94,6 +124,10 @@ public class TranslationService : ITranslationService
         
         if (translatedTexts.Count != translations.Count)
             throw new InvalidOperationException("Number of translations returned does not match the number of translations sent");
+        
+        entity.Translations.AddRange(translatedTexts);
+        
+        await _context.SaveChangesAsync();
 
         return true;
     }

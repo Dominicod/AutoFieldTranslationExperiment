@@ -6,6 +6,8 @@ namespace AutoFieldTranslationExperiment.Infrastructure.Data;
 
 public interface IApplicationDbContext
 {
+    DbSet<T> Set<T>() where T : class;
+    
     DbSet<Product> Products { get; }
 
     DbSet<Translation> Translations { get; }

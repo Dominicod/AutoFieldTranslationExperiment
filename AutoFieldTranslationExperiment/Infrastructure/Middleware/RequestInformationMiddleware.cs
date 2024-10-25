@@ -24,6 +24,8 @@ internal sealed class RequestInformationMiddleware(ILogger<RequestInformationMid
         await context.RequestServices
             .GetRequiredService<ILanguageService>()
             .InitializeLanguageStateAsync(preferredBrowserLanguage);
+        
+        Thread.CurrentThread.CurrentCulture = new CultureInfo(preferredBrowserLanguage);
 
         logger.LogInformation("Request: {Method} {Path} Language: {LanguageCode}", context.Request.Method, context.Request.Path, preferredBrowserLanguage);
 

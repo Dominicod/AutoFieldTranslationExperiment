@@ -3,10 +3,8 @@ using AutoFieldTranslationExperiment.Shared;
 
 namespace AutoFieldTranslationExperiment.Models;
 
-public sealed class Product : BaseEntity
+public sealed class Product : TranslatableEntity
 {
-    public List<Translation> Translations { get; set; } = [];
-
     public ProductGet MapToDto()
     {
         var names = Translations

@@ -16,6 +16,8 @@ internal sealed class ProductService(IApplicationDbContext context, ITranslation
 
         var product = await context.Products
             .Include(i => i.Translations)
+                .ThenInclude(i => i.Language)
+            .AsSplitQuery()
             .AsNoTracking()
             .FirstOrDefaultAsync(i => i.Id == id);
 
@@ -28,6 +30,8 @@ internal sealed class ProductService(IApplicationDbContext context, ITranslation
     {
         return await context.Products
             .Include(i => i.Translations)
+                .ThenInclude(i => i.Language)
+            .AsSplitQuery()
             .AsNoTracking()
             .Select(i => i.MapToDto())
             .ToListAsync();
@@ -38,24 +42,30 @@ internal sealed class ProductService(IApplicationDbContext context, ITranslation
         if (string.IsNullOrEmpty(request.Name))
             throw new ValidationException("Product Name cannot be empty");
 
+        // Hopefully just temporary
+        var language = new Language
+        {
+            Id = languageService.CurrentBrowserLanguage.Id,
+            Code = languageService.CurrentBrowserLanguage.Code
+        };
+        context.Languages.Entry(language).State = EntityState.Unchanged;
+        var translation = new Translation
+        {
+            LanguageId = languageService.CurrentBrowserLanguage.Id,
+            Language = language,
+            Value = request.Name,
+            Key = nameof(request.Name)
+        };
         var product = new Product
         {
-            Translations =
-            [
-                new Translation
-                {
-                    LanguageId = languageService.CurrentBrowserLanguage.Id,
-                    Value = request.Name,
-                    Key = nameof(request.Name)
-                }
-            ]
+            Translations = [translation]
         };
 
         var transaction = await context.BeginTransactionAsync();
 
         await context.Products.AddAsync(product);
         await context.SaveChangesAsync();
-        await translationService.AddAlternateTranslationsAsync(product.Translations);
+        await translationService.AddAlternateTranslationsAsync(product, product.Translations);
         
         await transaction.CommitAsync();
         
@@ -72,7 +82,8 @@ internal sealed class ProductService(IApplicationDbContext context, ITranslation
 
         var product = await context.Products
             .Include(i => i.Translations)
-            .ThenInclude(i => i.Language)
+                .ThenInclude(i => i.Language)
+            .AsSplitQuery()
             .FirstOrDefaultAsync(i => i.Id == request.Id);
 
         Guard.Against.NotFound("Product", product, nameof(product));
@@ -84,18 +95,31 @@ internal sealed class ProductService(IApplicationDbContext context, ITranslation
         if (currentTranslation is not null)
             currentTranslation.Value = request.Name;
         else
+        {
+            // Hopefully just temporary
+            var language = new Language
+            {
+                Id = languageService.CurrentBrowserLanguage.Id,
+                Code = languageService.CurrentBrowserLanguage.Code
+            };
+            context.Languages.Entry(language).State = EntityState.Unchanged;
+            
             product.Translations.Add(new Translation
             {
                 LanguageId = languageService.CurrentBrowserLanguage.Id,
+                Language = language,
                 Value = request.Name,
                 Key = nameof(request.Name)
             });
+        }
         
         var transaction = await context.BeginTransactionAsync();
 
         context.Products.Update(product);
         await context.SaveChangesAsync();
-        await translationService.AddAlternateTranslationsAsync(product.Translations);
+        await translationService.AddAlternateTranslationsAsync(product, product.Translations
+            .Where(i => i.LanguageId == languageService.CurrentBrowserLanguage.Id)
+            .ToList());
         
         await transaction.CommitAsync();
         

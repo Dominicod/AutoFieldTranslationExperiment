@@ -11,7 +11,7 @@ public class LanguageService(IApplicationDbContext context) : ILanguageService
 {
     public LanguageGet CurrentBrowserLanguage { get; set; } = null!;
     public List<LanguageGet> SupportedLanguages { get; set; } = [];
-
+    
     public async Task InitializeLanguageStateAsync(string browserLanguageCode)
     {
         SupportedLanguages = await context.Languages
