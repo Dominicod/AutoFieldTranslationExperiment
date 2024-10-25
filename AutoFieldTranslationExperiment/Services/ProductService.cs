@@ -51,10 +51,13 @@ internal sealed class ProductService(IApplicationDbContext context, ITranslation
             ]
         };
 
+        var transaction = await context.BeginTransactionAsync();
+
         await context.Products.AddAsync(product);
         await context.SaveChangesAsync();
-
         await translationService.AddAlternateTranslationsAsync(product.Translations);
+        
+        await transaction.CommitAsync();
         
         return product.MapToDto();
     }
@@ -87,11 +90,14 @@ internal sealed class ProductService(IApplicationDbContext context, ITranslation
                 Value = request.Name,
                 Key = nameof(request.Name)
             });
+        
+        var transaction = await context.BeginTransactionAsync();
 
         context.Products.Update(product);
         await context.SaveChangesAsync();
-        
         await translationService.AddAlternateTranslationsAsync(product.Translations);
+        
+        await transaction.CommitAsync();
         
         return product.MapToDto();
     }

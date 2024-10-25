@@ -1,6 +1,7 @@
 using System.Reflection;
 using AutoFieldTranslationExperiment.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace AutoFieldTranslationExperiment.Infrastructure.Data;
 
@@ -12,6 +13,8 @@ internal sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext
     public DbSet<Translation> Translations => Set<Translation>();
 
     public DbSet<Language> Languages => Set<Language>();
+    
+    public Task<IDbContextTransaction> BeginTransactionAsync() => Database.BeginTransactionAsync();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
