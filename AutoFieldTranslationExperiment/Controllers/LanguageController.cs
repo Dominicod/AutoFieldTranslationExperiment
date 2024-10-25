@@ -11,10 +11,9 @@ public class LanguageController(ILanguageService languageService) : ControllerBa
 {
     [HttpGet]
     [Route("")]
-    public async Task<IResult> GetAll()
+    public Task<IResult> GetAll()
     {
-        var languages = await languageService.GetLanguagesAsync();
-        return Results.Ok(languages);
+        return Task.FromResult(Results.Ok(languageService.SupportedLanguages));
     }
 
     [HttpPost]

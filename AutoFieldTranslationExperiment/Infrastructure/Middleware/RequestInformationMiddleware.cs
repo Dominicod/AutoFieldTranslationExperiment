@@ -21,13 +21,11 @@ internal sealed class RequestInformationMiddleware(ILogger<RequestInformationMid
             preferredBrowserLanguage = "en-US";
         }
 
-        var languageService = context.RequestServices.GetRequiredService<ILanguageService>();
-        languageService.CurrentBrowserLanguage = await languageService.GetLanguageByCode(preferredBrowserLanguage);
+        await context.RequestServices
+            .GetRequiredService<ILanguageService>()
+            .InitializeLanguageStateAsync(preferredBrowserLanguage);
 
-        Thread.CurrentThread.CurrentCulture = new CultureInfo(languageService.CurrentBrowserLanguage.Code);
-
-        logger.LogInformation("Request: {Method} {Path} Language: {LanguageCode}", context.Request.Method,
-            context.Request.Path, preferredBrowserLanguage);
+        logger.LogInformation("Request: {Method} {Path} Language: {LanguageCode}", context.Request.Method, context.Request.Path, preferredBrowserLanguage);
 
         await next(context);
         

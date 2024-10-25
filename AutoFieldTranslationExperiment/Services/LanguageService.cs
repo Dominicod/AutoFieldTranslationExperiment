@@ -10,13 +10,20 @@ namespace AutoFieldTranslationExperiment.Services;
 public class LanguageService(IApplicationDbContext context) : ILanguageService
 {
     public LanguageGet CurrentBrowserLanguage { get; set; } = null!;
+    public List<LanguageGet> SupportedLanguages { get; set; } = [];
 
-    public async Task<IEnumerable<LanguageGet>> GetLanguagesAsync()
+    public async Task InitializeLanguageStateAsync(string browserLanguageCode)
     {
-        return await context.Languages
+        SupportedLanguages = await context.Languages
             .AsNoTracking()
             .Select(i => i.MapToDto())
             .ToListAsync();
+        
+        var browserLanguage = SupportedLanguages.FirstOrDefault(i => i.Code == browserLanguageCode);
+        
+        Guard.Against.NotFound("Language", browserLanguage, nameof(browserLanguage));
+        
+        CurrentBrowserLanguage = browserLanguage;
     }
 
     public async Task<LanguageGet> GetLanguageByCode(string languageCode)

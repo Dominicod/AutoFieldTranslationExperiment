@@ -7,7 +7,9 @@ public interface ILanguageService
 {
     LanguageGet CurrentBrowserLanguage { get; set; }
     
-    Task<IEnumerable<LanguageGet>> GetLanguagesAsync();
+    public List<LanguageGet> SupportedLanguages { get; set; }
+
+    Task InitializeLanguageStateAsync(string browserLanguageCode);
 
     Task<LanguageGet> GetLanguageByCode(string languageCode);
 
