@@ -5,7 +5,6 @@ using AutoFieldTranslationExperiment.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -13,11 +12,9 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AutoFieldTranslationExperiment.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241020234905_Initial")]
-    partial class Initial
+    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -26,7 +23,23 @@ namespace AutoFieldTranslationExperiment.Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("AutoFieldTranslationExperiment.Models.Product", b =>
+            modelBuilder.Entity("Web.Models.Language", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Languages");
+                });
+
+            modelBuilder.Entity("Web.Models.Product", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -37,7 +50,7 @@ namespace AutoFieldTranslationExperiment.Data.Migrations
                     b.ToTable("Products");
                 });
 
-            modelBuilder.Entity("AutoFieldTranslationExperiment.Models.Translation", b =>
+            modelBuilder.Entity("Web.Models.Translation", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -48,10 +61,8 @@ namespace AutoFieldTranslationExperiment.Data.Migrations
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
 
-                    b.Property<string>("LanguageCode")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
+                    b.Property<Guid>("LanguageId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("ProductId")
                         .HasColumnType("uniqueidentifier");
@@ -62,20 +73,30 @@ namespace AutoFieldTranslationExperiment.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("LanguageId");
+
                     b.HasIndex("ProductId");
 
                     b.ToTable("Translations");
                 });
 
-            modelBuilder.Entity("AutoFieldTranslationExperiment.Models.Translation", b =>
+            modelBuilder.Entity("Web.Models.Translation", b =>
                 {
-                    b.HasOne("AutoFieldTranslationExperiment.Models.Product", null)
+                    b.HasOne("Web.Models.Language", "Language")
+                        .WithMany()
+                        .HasForeignKey("LanguageId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Web.Models.Product", null)
                         .WithMany("Translations")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade);
+
+                    b.Navigation("Language");
                 });
 
-            modelBuilder.Entity("AutoFieldTranslationExperiment.Models.Product", b =>
+            modelBuilder.Entity("Web.Models.Product", b =>
                 {
                     b.Navigation("Translations");
                 });

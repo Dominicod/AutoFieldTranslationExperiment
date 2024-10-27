@@ -5,6 +5,7 @@ using AutoFieldTranslationExperiment.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -12,9 +13,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AutoFieldTranslationExperiment.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241021001202_Add_Language_To_DB")]
+    partial class Add_Language_To_DB
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -23,7 +26,7 @@ namespace AutoFieldTranslationExperiment.Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("AutoFieldTranslationExperiment.Models.Language", b =>
+            modelBuilder.Entity("Web.Models.Language", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -39,7 +42,7 @@ namespace AutoFieldTranslationExperiment.Data.Migrations
                     b.ToTable("Languages");
                 });
 
-            modelBuilder.Entity("AutoFieldTranslationExperiment.Models.Product", b =>
+            modelBuilder.Entity("Web.Models.Product", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -50,7 +53,7 @@ namespace AutoFieldTranslationExperiment.Data.Migrations
                     b.ToTable("Products");
                 });
 
-            modelBuilder.Entity("AutoFieldTranslationExperiment.Models.Translation", b =>
+            modelBuilder.Entity("Web.Models.Translation", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -80,15 +83,15 @@ namespace AutoFieldTranslationExperiment.Data.Migrations
                     b.ToTable("Translations");
                 });
 
-            modelBuilder.Entity("AutoFieldTranslationExperiment.Models.Translation", b =>
+            modelBuilder.Entity("Web.Models.Translation", b =>
                 {
-                    b.HasOne("AutoFieldTranslationExperiment.Models.Language", "Language")
+                    b.HasOne("Web.Models.Language", "Language")
                         .WithMany()
                         .HasForeignKey("LanguageId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("AutoFieldTranslationExperiment.Models.Product", null)
+                    b.HasOne("Web.Models.Product", null)
                         .WithMany("Translations")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade);
@@ -96,7 +99,7 @@ namespace AutoFieldTranslationExperiment.Data.Migrations
                     b.Navigation("Language");
                 });
 
-            modelBuilder.Entity("AutoFieldTranslationExperiment.Models.Product", b =>
+            modelBuilder.Entity("Web.Models.Product", b =>
                 {
                     b.Navigation("Translations");
                 });

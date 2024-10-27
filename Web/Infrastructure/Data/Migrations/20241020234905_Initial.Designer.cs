@@ -13,8 +13,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AutoFieldTranslationExperiment.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241021001202_Add_Language_To_DB")]
-    partial class Add_Language_To_DB
+    [Migration("20241020234905_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -26,23 +26,7 @@ namespace AutoFieldTranslationExperiment.Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("AutoFieldTranslationExperiment.Models.Language", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Code")
-                        .IsRequired()
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Languages");
-                });
-
-            modelBuilder.Entity("AutoFieldTranslationExperiment.Models.Product", b =>
+            modelBuilder.Entity("Web.Models.Product", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -53,7 +37,7 @@ namespace AutoFieldTranslationExperiment.Data.Migrations
                     b.ToTable("Products");
                 });
 
-            modelBuilder.Entity("AutoFieldTranslationExperiment.Models.Translation", b =>
+            modelBuilder.Entity("Web.Models.Translation", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -64,8 +48,10 @@ namespace AutoFieldTranslationExperiment.Data.Migrations
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
 
-                    b.Property<Guid>("LanguageId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("LanguageCode")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
 
                     b.Property<Guid?>("ProductId")
                         .HasColumnType("uniqueidentifier");
@@ -76,30 +62,20 @@ namespace AutoFieldTranslationExperiment.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("LanguageId");
-
                     b.HasIndex("ProductId");
 
                     b.ToTable("Translations");
                 });
 
-            modelBuilder.Entity("AutoFieldTranslationExperiment.Models.Translation", b =>
+            modelBuilder.Entity("Web.Models.Translation", b =>
                 {
-                    b.HasOne("AutoFieldTranslationExperiment.Models.Language", "Language")
-                        .WithMany()
-                        .HasForeignKey("LanguageId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("AutoFieldTranslationExperiment.Models.Product", null)
+                    b.HasOne("Web.Models.Product", null)
                         .WithMany("Translations")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade);
-
-                    b.Navigation("Language");
                 });
 
-            modelBuilder.Entity("AutoFieldTranslationExperiment.Models.Product", b =>
+            modelBuilder.Entity("Web.Models.Product", b =>
                 {
                     b.Navigation("Translations");
                 });

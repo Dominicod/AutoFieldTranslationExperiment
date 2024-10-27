@@ -22,7 +22,7 @@ builder.Host.UseSerilog((ctx, _, loggerConfiguration) =>
 
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "AutoFieldTranslationExperiment", Version = "v1" });
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Web", Version = "v1" });
 });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddDbContext<IApplicationDbContext, ApplicationDbContext>(options =>
