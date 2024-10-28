@@ -1,6 +1,7 @@
 using Ardalis.GuardClauses;
 using AutoFieldTranslationExperiment.DTOs.Language;
 using AutoFieldTranslationExperiment.DTOs.Translation;
+using AutoFieldTranslationExperiment.Infrastructure;
 using AutoFieldTranslationExperiment.Infrastructure.Data;
 using Azure;
 using Azure.AI.Translation.Text;
@@ -16,12 +17,12 @@ public class TranslationService : ITranslationService
 {
     private readonly TextTranslationClient _client;
     private readonly IApplicationDbContext _context;
-    private readonly ILanguageService _languageService;
+    private readonly LanguageInformation _languageInformation;
     
-    public TranslationService(IConfiguration configuration, IApplicationDbContext context, ILanguageService languageService)
+    public TranslationService(IConfiguration configuration, IApplicationDbContext context, LanguageInformation languageInformation)
     {
         _context = context;
-        _languageService = languageService;
+        _languageInformation = languageInformation;
         var credential = new AzureKeyCredential(configuration["Keys:Azure:AIService"] ?? throw new InvalidOperationException("Azure AIService key not found"));
         var region = configuration["AzureRegions:AIService"] ?? throw new InvalidOperationException("Azure AIService region not found");
         _client = new TextTranslationClient(credential, region);
@@ -38,8 +39,8 @@ public class TranslationService : ITranslationService
     {
         LanguageGet source;
         
-        if (sourceLanguage.Id == _languageService.CurrentBrowserLanguage.Id)
-            source = _languageService.CurrentBrowserLanguage;
+        if (sourceLanguage.Id == _languageInformation.CurrentBrowserLanguage.Id)
+            source = _languageInformation.CurrentBrowserLanguage;
         else
         {
             var language = await _context.Languages
@@ -98,15 +99,15 @@ public class TranslationService : ITranslationService
 
     public async Task AddAlternateTranslationsForEntityAsync(TranslatableEntity entity, List<Translation> translations)
     {
-        if (translations.Any(i => i.LanguageId != _languageService.CurrentBrowserLanguage.Id))
+        if (translations.Any(i => i.LanguageId != _languageInformation.CurrentBrowserLanguage.Id))
             throw new ValidationException("Alternate translations must be in the current browser language");
 
         var source = new Language
         {
-            Id = _languageService.CurrentBrowserLanguage.Id,
-            Code = _languageService.CurrentBrowserLanguage.Code
+            Id = _languageInformation.CurrentBrowserLanguage.Id,
+            Code = _languageInformation.CurrentBrowserLanguage.Code
         };
-        var targets = _languageService.SupportedLanguages
+        var targets = _languageInformation.SupportedLanguages
             .Where(i => i.Id != source.Id)
             .Select(i => new Language
             {

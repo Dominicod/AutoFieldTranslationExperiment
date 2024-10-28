@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using AutoFieldTranslationExperiment.Infrastructure;
 using AutoFieldTranslationExperiment.Infrastructure.Data;
 using AutoFieldTranslationExperiment.Infrastructure.Exceptions;
 using AutoFieldTranslationExperiment.Infrastructure.Middleware;
@@ -31,6 +32,7 @@ builder.Services.AddDbContext<IApplicationDbContext, ApplicationDbContext>(optio
 });
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ILanguageService, LanguageService>();
+builder.Services.AddScoped<LanguageInformation>();
 builder.Services.AddScoped<ITranslationService, TranslationService>();
 builder.Services.AddScoped<RequestInformationMiddleware>();
 builder.Services.AddExceptionHandler<ExceptionHandler>();

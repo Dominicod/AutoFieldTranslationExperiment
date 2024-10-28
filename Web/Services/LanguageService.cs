@@ -1,5 +1,6 @@
 using Ardalis.GuardClauses;
 using AutoFieldTranslationExperiment.DTOs.Language;
+using AutoFieldTranslationExperiment.Infrastructure;
 using AutoFieldTranslationExperiment.Infrastructure.Data;
 using Domain;
 using FluentValidation;
@@ -7,23 +8,20 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AutoFieldTranslationExperiment.Services;
 
-public class LanguageService(IApplicationDbContext context, ITranslationService translationService) : ILanguageService
+public class LanguageService(IApplicationDbContext context, ITranslationService translationService, LanguageInformation languageInformation) : ILanguageService
 {
-    public LanguageGet CurrentBrowserLanguage { get; set; } = null!;
-    public List<LanguageGet> SupportedLanguages { get; set; } = [];
-    
     public async Task InitializeLanguageStateAsync(string browserLanguageCode)
     {
-        SupportedLanguages = await context.Languages
+        languageInformation.SupportedLanguages = await context.Languages
             .AsNoTracking()
             .Select(i => LanguageGet.Map(i))
             .ToListAsync();
         
-        var browserLanguage = SupportedLanguages.FirstOrDefault(i => i.Code == browserLanguageCode);
+        var browserLanguage = languageInformation.SupportedLanguages.FirstOrDefault(i => i.Code == browserLanguageCode);
         
         Guard.Against.NotFound("Language", browserLanguage, nameof(browserLanguage));
         
-        CurrentBrowserLanguage = browserLanguage;
+        languageInformation.CurrentBrowserLanguage = browserLanguage;
     }
 
     public async Task<LanguageGet> GetLanguageByCode(string languageCode)

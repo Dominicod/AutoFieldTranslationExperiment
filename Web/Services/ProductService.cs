@@ -1,5 +1,6 @@
 using Ardalis.GuardClauses;
 using AutoFieldTranslationExperiment.DTOs.Product;
+using AutoFieldTranslationExperiment.Infrastructure;
 using AutoFieldTranslationExperiment.Infrastructure.Data;
 using Domain;
 using FluentValidation;
@@ -7,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AutoFieldTranslationExperiment.Services;
 
-internal sealed class ProductService(IApplicationDbContext context, ITranslationService translationService, ILanguageService languageService) : IProductService
+internal sealed class ProductService(IApplicationDbContext context, ITranslationService translationService, LanguageInformation languageInformation) : IProductService
 {
     public async Task<ProductGet> GetProductAsync(Guid id)
     {
@@ -45,13 +46,13 @@ internal sealed class ProductService(IApplicationDbContext context, ITranslation
         // Hopefully just temporary
         var language = new Language
         {
-            Id = languageService.CurrentBrowserLanguage.Id,
-            Code = languageService.CurrentBrowserLanguage.Code
+            Id = languageInformation.CurrentBrowserLanguage.Id,
+            Code = languageInformation.CurrentBrowserLanguage.Code
         };
         context.Languages.Entry(language).State = EntityState.Unchanged;
         var translation = new Translation
         {
-            LanguageId = languageService.CurrentBrowserLanguage.Id,
+            LanguageId = languageInformation.CurrentBrowserLanguage.Id,
             Language = language,
             Value = request.Name,
             Key = nameof(request.Name)
@@ -90,7 +91,7 @@ internal sealed class ProductService(IApplicationDbContext context, ITranslation
 
         var currentTranslation = product.Translations
             .Where(i => i.Key == nameof(request.Name))
-            .FirstOrDefault(i => i.Language.Id == languageService.CurrentBrowserLanguage.Id);
+            .FirstOrDefault(i => i.Language.Id == languageInformation.CurrentBrowserLanguage.Id);
 
         if (currentTranslation is not null)
             currentTranslation.Value = request.Name;
@@ -99,14 +100,14 @@ internal sealed class ProductService(IApplicationDbContext context, ITranslation
             // Hopefully just temporary
             var language = new Language
             {
-                Id = languageService.CurrentBrowserLanguage.Id,
-                Code = languageService.CurrentBrowserLanguage.Code
+                Id = languageInformation.CurrentBrowserLanguage.Id,
+                Code = languageInformation.CurrentBrowserLanguage.Code
             };
             context.Languages.Entry(language).State = EntityState.Unchanged;
             
             product.Translations.Add(new Translation
             {
-                LanguageId = languageService.CurrentBrowserLanguage.Id,
+                LanguageId = languageInformation.CurrentBrowserLanguage.Id,
                 Language = language,
                 Value = request.Name,
                 Key = nameof(request.Name)
@@ -118,7 +119,7 @@ internal sealed class ProductService(IApplicationDbContext context, ITranslation
         context.Products.Update(product);
         await context.SaveChangesAsync();
         await translationService.AddAlternateTranslationsForEntityAsync(product, product.Translations
-            .Where(i => i.LanguageId == languageService.CurrentBrowserLanguage.Id)
+            .Where(i => i.LanguageId == languageInformation.CurrentBrowserLanguage.Id)
             .ToList());
         
         await transaction.CommitAsync();

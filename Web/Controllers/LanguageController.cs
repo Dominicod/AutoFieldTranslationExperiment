@@ -1,4 +1,5 @@
 using AutoFieldTranslationExperiment.DTOs.Language;
+using AutoFieldTranslationExperiment.Infrastructure;
 using AutoFieldTranslationExperiment.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,13 +8,13 @@ namespace AutoFieldTranslationExperiment.Controllers;
 [ApiController]
 [Area("api")]
 [Route("[area]/[controller]")]
-public class LanguageController(ILanguageService languageService) : ControllerBase
+public class LanguageController(ILanguageService languageService, LanguageInformation languageInformation) : ControllerBase
 {
     [HttpGet]
     [Route("")]
     public Task<IResult> GetAll()
     {
-        return Task.FromResult(Results.Ok(languageService.SupportedLanguages));
+        return Task.FromResult(Results.Ok(languageInformation.SupportedLanguages));
     }
 
     [HttpPost]
