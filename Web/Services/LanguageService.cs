@@ -1,7 +1,7 @@
 using Ardalis.GuardClauses;
 using AutoFieldTranslationExperiment.DTOs.Language;
 using AutoFieldTranslationExperiment.Infrastructure.Data;
-using AutoFieldTranslationExperiment.Models;
+using Domain;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,7 +16,7 @@ public class LanguageService(IApplicationDbContext context) : ILanguageService
     {
         SupportedLanguages = await context.Languages
             .AsNoTracking()
-            .Select(i => i.MapToDto())
+            .Select(i => LanguageGet.Map(i))
             .ToListAsync();
         
         var browserLanguage = SupportedLanguages.FirstOrDefault(i => i.Code == browserLanguageCode);
@@ -37,7 +37,7 @@ public class LanguageService(IApplicationDbContext context) : ILanguageService
         
         Guard.Against.NotFound("Language", language, nameof(language));
         
-        return language.MapToDto();
+        return LanguageGet.Map(language);
     }
 
     public async Task<LanguageGet> AddLanguageAsync(LanguageCreate request)
@@ -53,7 +53,7 @@ public class LanguageService(IApplicationDbContext context) : ILanguageService
         await context.Languages.AddAsync(language);
         await context.SaveChangesAsync();
 
-        return language.MapToDto();
+        return LanguageGet.Map(language);
     }
 
     public async Task RemoveLanguageAsync(Guid id)

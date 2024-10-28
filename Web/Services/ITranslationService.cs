@@ -1,8 +1,8 @@
 using AutoFieldTranslationExperiment.DTOs.Translation;
-using AutoFieldTranslationExperiment.Models;
-using AutoFieldTranslationExperiment.Shared;
 using Azure.AI.Translation.Text;
-using Translation = AutoFieldTranslationExperiment.Models.Translation;
+using Domain;
+using Domain.Common;
+using Translation = Domain.Translation;
 
 namespace AutoFieldTranslationExperiment.Services;
 

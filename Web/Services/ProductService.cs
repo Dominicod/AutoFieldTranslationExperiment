@@ -1,7 +1,7 @@
 using Ardalis.GuardClauses;
 using AutoFieldTranslationExperiment.DTOs.Product;
 using AutoFieldTranslationExperiment.Infrastructure.Data;
-using AutoFieldTranslationExperiment.Models;
+using Domain;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
@@ -23,7 +23,7 @@ internal sealed class ProductService(IApplicationDbContext context, ITranslation
 
         Guard.Against.NotFound("Product", product, nameof(product));
 
-        return product.MapToDto();
+        return ProductGet.Map(product);
     }
 
     public async Task<IEnumerable<ProductGet>> GetProductsAsync()
@@ -33,7 +33,7 @@ internal sealed class ProductService(IApplicationDbContext context, ITranslation
                 .ThenInclude(i => i.Language)
             .AsSplitQuery()
             .AsNoTracking()
-            .Select(i => i.MapToDto())
+            .Select(i => ProductGet.Map(i))
             .ToListAsync();
     }
 
@@ -69,7 +69,7 @@ internal sealed class ProductService(IApplicationDbContext context, ITranslation
         
         await transaction.CommitAsync();
         
-        return product.MapToDto();
+        return ProductGet.Map(product);
     }
 
     public async Task<ProductGet> UpdateProductAsync(ProductUpdate request)
@@ -123,7 +123,7 @@ internal sealed class ProductService(IApplicationDbContext context, ITranslation
         
         await transaction.CommitAsync();
         
-        return product.MapToDto();
+        return ProductGet.Map(product);
     }
 
     public async Task DeleteProductAsync(Guid id)

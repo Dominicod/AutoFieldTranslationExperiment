@@ -1,5 +1,4 @@
 using AutoFieldTranslationExperiment.DTOs.Language;
-using AutoFieldTranslationExperiment.Models;
 
 namespace AutoFieldTranslationExperiment.Services;
 

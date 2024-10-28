@@ -1,4 +1,4 @@
-namespace AutoFieldTranslationExperiment.Shared;
+namespace Domain.Common;
 
 public abstract class BaseEntity
 {

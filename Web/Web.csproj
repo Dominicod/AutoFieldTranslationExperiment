@@ -31,4 +31,8 @@
         <Folder Include="Infrastructure\" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\src\Domain\Domain.csproj" />
+    </ItemGroup>
+
 </Project>

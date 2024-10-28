@@ -1,5 +1,5 @@
 using System.Reflection;
-using AutoFieldTranslationExperiment.Models;
+using Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 

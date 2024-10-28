@@ -2,13 +2,13 @@ using Ardalis.GuardClauses;
 using AutoFieldTranslationExperiment.DTOs.Language;
 using AutoFieldTranslationExperiment.DTOs.Translation;
 using AutoFieldTranslationExperiment.Infrastructure.Data;
-using AutoFieldTranslationExperiment.Models;
-using AutoFieldTranslationExperiment.Shared;
 using Azure;
 using Azure.AI.Translation.Text;
+using Domain;
+using Domain.Common;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
-using Translation = AutoFieldTranslationExperiment.Models.Translation;
+using Translation = Domain.Translation;
 
 namespace AutoFieldTranslationExperiment.Services;
 
@@ -48,7 +48,7 @@ public class TranslationService : ITranslationService
             
             Guard.Against.NotFound("Source Language", language, nameof(source));
             
-            source = language.MapToDto();
+            source = LanguageGet.Map(language);
         }
         
         var targetIds = targetLanguages.Select(t => t.Id);

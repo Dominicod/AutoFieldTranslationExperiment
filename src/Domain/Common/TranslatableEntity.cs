@@ -1,6 +1,4 @@
-using AutoFieldTranslationExperiment.Models;
-
-namespace AutoFieldTranslationExperiment.Shared;
+namespace Domain.Common;
 
 public abstract class TranslatableEntity : BaseEntity
 {
