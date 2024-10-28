@@ -18,6 +18,8 @@ For a extensive list of available API routes, please refer to the wiki at: https
 This application also does support Swagger, which can be accessed at the root of the application when in development.
 (e.g. `https://localhost:7101/swagger`)
 
+> When adding languages, the "Code" relates to a browser language code. There will be a route to help with this in the future, see issue: [#3](https://github.com/Dominicod/AutoFieldTranslationExperiment/issues/3)
+
 <h2 id="architecture">Architecture</h2>
 
 This project is based on a semi-traditional "N-Layer" architecture. The project is divided into the following layers:
