@@ -29,7 +29,7 @@ public class TranslationService : ITranslationService
     {
         var source = sourceLanguage.Id == _languageInformation.CurrentBrowserLanguage.Id ? _languageInformation.CurrentBrowserLanguage : sourceLanguage;
         
-        if (translations.Any(i => i.Language.Code != source.Code))
+        if (translations.Any(i => i.LanguageId != source.Id))
             throw new ValidationException("Source language code does not match the language code of the translations");
         
         var response = await _client.TranslateAsync(
