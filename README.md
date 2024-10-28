@@ -5,11 +5,15 @@
 </h1>
 
 <p align="center">
+    <a href="#overview">Route Overview</a> •
     <a href="#architecture">Architecture</a> •
     <a href="#how-to-run">How To Run</a> •
     <a href="#local-env">Local Environment</a> •
     <a href="#technologies">Technologies</a>
 </p>
+
+<h2 id="overview">Route Overview</h2>
+For a extensive list of available API routes, please refer to the [API Documentation](https://github.com/Dominicod/AutoFieldTranslationExperiment/wiki/API-Documentation).
 
 <h2 id="architecture">Architecture</h2>
 
