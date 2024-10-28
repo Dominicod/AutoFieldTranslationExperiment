@@ -34,7 +34,7 @@ internal sealed class ExceptionHandler : IExceptionHandler
             Status = StatusCodes.Status500InternalServerError,
             Type = "https://tools.ietf.org/html/rfc7231#section-6.6.1",
             Title = "An error occurred while processing your request.",
-            Detail = ex.Message
+            Detail = "Please contact the system administrator."
         });
 
         return true;
