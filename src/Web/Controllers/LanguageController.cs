@@ -15,7 +15,7 @@ public class LanguageController(ILanguageService languageService, LanguageInform
     [Route("")]
     public Task<IResult> GetAll()
     {
-        return Task.FromResult(Results.Ok(languageInformation.SupportedLanguages));
+        return Task.FromResult(Results.Ok(languageInformation.SupportedLanguages.Select(LanguageGet.Map)));
     }
 
     [HttpPost]
