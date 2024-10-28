@@ -5,6 +5,7 @@
     <explicitIncludes>
       <Path>.github/workflows/main_od-experiments.yml</Path>
       <Path>src/Domain</Path>
+      <Path>src/Infrastructure</Path>
     </explicitIncludes>
     <explicitExcludes>
       <Path>src</Path>

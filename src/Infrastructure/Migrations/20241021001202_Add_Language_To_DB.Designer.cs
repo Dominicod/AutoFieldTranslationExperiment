@@ -2,6 +2,7 @@
 using System;
 using AutoFieldTranslationExperiment.Data;
 using AutoFieldTranslationExperiment.Infrastructure.Data;
+using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;

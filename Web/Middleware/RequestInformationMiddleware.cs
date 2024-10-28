@@ -1,8 +1,7 @@
 using System.Globalization;
-using Ardalis.GuardClauses;
 using AutoFieldTranslationExperiment.Services;
 
-namespace AutoFieldTranslationExperiment.Infrastructure.Middleware;
+namespace AutoFieldTranslationExperiment.Middleware;
 
 internal sealed class RequestInformationMiddleware(ILogger<RequestInformationMiddleware> logger) : IMiddleware
 {

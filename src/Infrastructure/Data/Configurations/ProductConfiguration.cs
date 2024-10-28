@@ -2,7 +2,7 @@ using Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace AutoFieldTranslationExperiment.Infrastructure.Data.Configurations;
+namespace Infrastructure.Data.Configurations;
 
 internal sealed class ProductConfig : IEntityTypeConfiguration<Product>
 {

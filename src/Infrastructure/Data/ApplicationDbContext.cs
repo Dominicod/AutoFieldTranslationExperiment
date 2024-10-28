@@ -3,9 +3,9 @@ using Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 
-namespace AutoFieldTranslationExperiment.Infrastructure.Data;
+namespace Infrastructure.Data;
 
-internal sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
     : DbContext(options), IApplicationDbContext
 {
     public DbSet<Product> Products => Set<Product>();

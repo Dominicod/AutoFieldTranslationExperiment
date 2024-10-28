@@ -2,7 +2,7 @@ using Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 
-namespace AutoFieldTranslationExperiment.Infrastructure.Data;
+namespace Infrastructure.Data;
 
 public interface IApplicationDbContext
 {

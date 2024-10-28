@@ -3,7 +3,7 @@ using FluentValidation;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AutoFieldTranslationExperiment.Infrastructure.Exceptions;
+namespace Infrastructure.Exceptions;
 
 internal sealed class ExceptionHandler : IExceptionHandler
 {
