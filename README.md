@@ -66,6 +66,10 @@ The file should contain the following:
 
 These secrets are all required for the project to function, and if they are missing an exception will be thrown.
 
+To setup Azure AI you will need to follow the documentation located here: [Azure Translator Documentation](https://learn.microsoft.com/en-us/azure/ai-services/translator/create-translator-resource)
+<br/>
+To setup the database you will need to create a new database in Azure SQL and replace the connection string with the one provided.
+
 ### Migrations
 
 Running database migrations is easy. Ensure you add the following flags to your command (values assume you are executing from repository root)
