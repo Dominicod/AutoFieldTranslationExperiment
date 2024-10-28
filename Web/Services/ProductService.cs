@@ -65,7 +65,7 @@ internal sealed class ProductService(IApplicationDbContext context, ITranslation
 
         await context.Products.AddAsync(product);
         await context.SaveChangesAsync();
-        await translationService.AddAlternateTranslationsAsync(product, product.Translations);
+        await translationService.AddAlternateTranslationsForEntityAsync(product, product.Translations);
         
         await transaction.CommitAsync();
         
@@ -117,7 +117,7 @@ internal sealed class ProductService(IApplicationDbContext context, ITranslation
 
         context.Products.Update(product);
         await context.SaveChangesAsync();
-        await translationService.AddAlternateTranslationsAsync(product, product.Translations
+        await translationService.AddAlternateTranslationsForEntityAsync(product, product.Translations
             .Where(i => i.LanguageId == languageService.CurrentBrowserLanguage.Id)
             .ToList());
         

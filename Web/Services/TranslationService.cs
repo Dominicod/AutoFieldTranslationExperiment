@@ -96,7 +96,7 @@ public class TranslationService : ITranslationService
         return translatedTexts;
     }
 
-    public async Task<bool> AddAlternateTranslationsAsync(TranslatableEntity entity, List<Translation> translations)
+    public async Task AddAlternateTranslationsForEntityAsync(TranslatableEntity entity, List<Translation> translations)
     {
         if (translations.Any(i => i.LanguageId != _languageService.CurrentBrowserLanguage.Id))
             throw new ValidationException("Alternate translations must be in the current browser language");
@@ -115,7 +115,7 @@ public class TranslationService : ITranslationService
             }).ToList();
 
         if (targets.Count is 0)
-            return true;
+            return;
         
         var translatedTexts = await TranslateAsync(
             translations: translations, 
@@ -128,7 +128,26 @@ public class TranslationService : ITranslationService
         entity.Translations.AddRange(translatedTexts);
         
         await _context.SaveChangesAsync();
+    }
 
-        return true;
+    public async Task TranslateAllEntitiesAsync(Language? from, Language to)
+    {
+        var entities = await _context.Translations
+            .AsSplitQuery()
+            .Where(i => i.LanguageId != to.Id)
+            .ToListAsync();
+
+        if (entities.Count is 0)
+            return;
+
+        // If no source language is provided, use the default language
+        var source = from ?? await _context.Languages.FirstAsync(i => i.IsDefault);
+        
+        var translations = await TranslateAsync(
+            translations: entities, 
+            sourceLanguage: source, 
+            targetLanguages: [to]);
+
+        var test = "";
     }
 }

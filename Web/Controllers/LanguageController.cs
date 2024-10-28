@@ -23,6 +23,14 @@ public class LanguageController(ILanguageService languageService) : ControllerBa
         var language = await languageService.AddLanguageAsync(request);
         return Results.Created(string.Empty, language);
     }
+    
+    [HttpPut]
+    [Route("")]
+    public async Task<IResult> SetDefault(Guid languageId)
+    {
+        await languageService.SetDefaultAsync(languageId);
+        return Results.NoContent();
+    }
 
     [HttpDelete]
     [Route("{id:guid}")]

@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AutoFieldTranslationExperiment.Services;
 
-public class LanguageService(IApplicationDbContext context) : ILanguageService
+public class LanguageService(IApplicationDbContext context, ITranslationService translationService) : ILanguageService
 {
     public LanguageGet CurrentBrowserLanguage { get; set; } = null!;
     public List<LanguageGet> SupportedLanguages { get; set; } = [];
@@ -47,13 +47,47 @@ public class LanguageService(IApplicationDbContext context) : ILanguageService
 
         var language = new Language
         {
-            Code = request.Code
+            Code = request.Code,
+            IsDefault = false
         };
+        
+        var defaultExists = await context.Languages
+            .AsNoTracking()
+            .AnyAsync(i => i.IsDefault);
+        
+        if (!defaultExists)
+            language.IsDefault = true;
 
         await context.Languages.AddAsync(language);
         await context.SaveChangesAsync();
 
+        await translationService.TranslateAllEntitiesAsync(null, to: language);
+
         return LanguageGet.Map(language);
+    }
+
+    public async Task<bool> SetDefaultAsync(Guid languageId)
+    {
+        var language = await context.Languages.FindAsync(languageId);
+        
+        Guard.Against.NotFound("Language", language, nameof(language));
+        
+        if (language.IsDefault)
+            throw new ValidationException("Language is already default");
+        
+        var currentDefaultLanguage = await context.Languages.FirstOrDefaultAsync(i => i.IsDefault);
+        
+        if (currentDefaultLanguage is not null)
+        {
+            currentDefaultLanguage.IsDefault = false;
+            context.Languages.Update(currentDefaultLanguage);
+        }
+        
+        language.IsDefault = true;
+        context.Languages.Update(language);
+        await context.SaveChangesAsync();
+        
+        return true;
     }
 
     public async Task RemoveLanguageAsync(Guid id)
@@ -64,6 +98,9 @@ public class LanguageService(IApplicationDbContext context) : ILanguageService
         var language = await context.Languages.FindAsync(id);
 
         Guard.Against.NotFound("Language", language, nameof(language));
+        
+        if (language.IsDefault)
+            throw new ValidationException("Cannot remove default language, set another language as default first");
 
         context.Languages.Remove(language);
         await context.SaveChangesAsync();

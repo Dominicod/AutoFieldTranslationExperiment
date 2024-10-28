@@ -13,6 +13,8 @@ public interface ILanguageService
     Task<LanguageGet> GetLanguageByCode(string languageCode);
 
     Task<LanguageGet> AddLanguageAsync(LanguageCreate request);
+    
+    Task<bool> SetDefaultAsync(Guid languageId);
 
     Task RemoveLanguageAsync(Guid id);
 }
