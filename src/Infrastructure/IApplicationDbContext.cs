@@ -2,7 +2,7 @@ using Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 
-namespace Infrastructure.Data;
+namespace Infrastructure;
 
 public interface IApplicationDbContext
 {

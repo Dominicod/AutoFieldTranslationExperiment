@@ -1,11 +1,10 @@
 using System.Text.Json.Serialization;
+using AutoFieldTranslationExperiment.Exceptions;
 using AutoFieldTranslationExperiment.Infrastructure;
 using AutoFieldTranslationExperiment.Infrastructure.Data;
 using AutoFieldTranslationExperiment.Middleware;
 using AutoFieldTranslationExperiment.Services;
 using Infrastructure;
-using Infrastructure.Data;
-using Infrastructure.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Serilog;

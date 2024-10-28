@@ -8,7 +8,6 @@ using Domain;
 using Domain.Common;
 using FluentValidation;
 using Infrastructure;
-using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Translation = Domain.Translation;
 
