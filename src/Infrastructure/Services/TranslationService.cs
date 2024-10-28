@@ -52,7 +52,6 @@ public class TranslationService : ITranslationService
                 translatedTexts.Add(new Translation
                 {
                     LanguageId = language.Id,
-                    Language = language,
                     Value = newTranslation.Translations[j].Text,
                     Key = prevTranslation.Key,
                     ProductId = prevTranslation.ProductId
@@ -68,18 +67,10 @@ public class TranslationService : ITranslationService
         if (translations.Any(i => i.LanguageId != _languageInformation.CurrentBrowserLanguage.Id))
             throw new ValidationException("Alternate translations must be in the current browser language");
 
-        var source = new Language
-        {
-            Id = _languageInformation.CurrentBrowserLanguage.Id,
-            Code = _languageInformation.CurrentBrowserLanguage.Code
-        };
+        var source = _languageInformation.CurrentBrowserLanguage;
         var targets = _languageInformation.SupportedLanguages
             .Where(i => i.Id != source.Id)
-            .Select(i => new Language
-            {
-                Id = i.Id,
-                Code = i.Code
-            }).ToList();
+            .ToList();
 
         if (targets.Count is 0)
             return;

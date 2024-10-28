@@ -29,8 +29,8 @@ public class ProductController(IProductService productService) : ControllerBase
     [Route("")]
     public async Task<IResult> Create(ProductCreate request)
     {
-        var product = await productService.CreateProductAsync(request);
-        return Results.Created($"/api/products/{product.Id}", product);
+        var id = await productService.CreateProductAsync(request);
+        return Results.Created($"/api/products/{id}", id);
     }
 
     [HttpPut]

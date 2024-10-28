@@ -8,9 +8,9 @@ public interface IProductService
 
     public Task<IEnumerable<ProductGet>> GetProductsAsync();
 
-    public Task<ProductGet> CreateProductAsync(ProductCreate product);
+    public Task<Guid> CreateProductAsync(ProductCreate product);
 
-    public Task<ProductGet> UpdateProductAsync(ProductUpdate product);
+    public Task<Guid> UpdateProductAsync(ProductUpdate product);
 
     public Task DeleteProductAsync(Guid id);
 }

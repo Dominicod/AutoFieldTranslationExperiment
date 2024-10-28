@@ -22,8 +22,8 @@ public class LanguageController(ILanguageService languageService, LanguageInform
     [Route("")]
     public async Task<IResult> Add(LanguageCreate request)
     {
-        var language = await languageService.AddLanguageAsync(request);
-        return Results.Created(string.Empty, language);
+        var id = await languageService.AddLanguageAsync(request);
+        return Results.Created(string.Empty, id);
     }
     
     [HttpPut]

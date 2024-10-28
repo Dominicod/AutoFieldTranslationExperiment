@@ -39,7 +39,7 @@ public class LanguageService(IApplicationDbContext context, ITranslationService 
         return LanguageGet.Map(language);
     }
 
-    public async Task<LanguageGet> AddLanguageAsync(LanguageCreate request)
+    public async Task<Guid> AddLanguageAsync(LanguageCreate request)
     {
         if (string.IsNullOrEmpty(request.Code))
             throw new ValidationException("Language code cannot be empty");
@@ -62,7 +62,7 @@ public class LanguageService(IApplicationDbContext context, ITranslationService 
         
         await translationService.AddTranslationForAllEntitiesAsync(null, to: language);
 
-        return LanguageGet.Map(language);
+        return language.Id;
     }
 
     public async Task<bool> SetDefaultAsync(Guid languageId)

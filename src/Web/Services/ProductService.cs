@@ -40,22 +40,14 @@ internal sealed class ProductService(IApplicationDbContext context, ITranslation
             .ToListAsync();
     }
 
-    public async Task<ProductGet> CreateProductAsync(ProductCreate request)
+    public async Task<Guid> CreateProductAsync(ProductCreate request)
     {
         if (string.IsNullOrEmpty(request.Name))
             throw new ValidationException("Product Name cannot be empty");
-
-        // Hopefully just temporary
-        var language = new Language
-        {
-            Id = languageInformation.CurrentBrowserLanguage.Id,
-            Code = languageInformation.CurrentBrowserLanguage.Code
-        };
-        context.Languages.Entry(language).State = EntityState.Unchanged;
+        
         var translation = new Translation
         {
             LanguageId = languageInformation.CurrentBrowserLanguage.Id,
-            Language = language,
             Value = request.Name,
             Key = nameof(request.Name)
         };
@@ -72,10 +64,10 @@ internal sealed class ProductService(IApplicationDbContext context, ITranslation
         
         await transaction.CommitAsync();
         
-        return ProductGet.Map(product);
+        return product.Id;
     }
 
-    public async Task<ProductGet> UpdateProductAsync(ProductUpdate request)
+    public async Task<Guid> UpdateProductAsync(ProductUpdate request)
     {
         if (request.Id == Guid.Empty)
             throw new ValidationException("Product Id cannot be empty");
@@ -98,23 +90,12 @@ internal sealed class ProductService(IApplicationDbContext context, ITranslation
         if (currentTranslation is not null)
             currentTranslation.Value = request.Name;
         else
-        {
-            // Hopefully just temporary
-            var language = new Language
-            {
-                Id = languageInformation.CurrentBrowserLanguage.Id,
-                Code = languageInformation.CurrentBrowserLanguage.Code
-            };
-            context.Languages.Entry(language).State = EntityState.Unchanged;
-            
             product.Translations.Add(new Translation
             {
                 LanguageId = languageInformation.CurrentBrowserLanguage.Id,
-                Language = language,
                 Value = request.Name,
                 Key = nameof(request.Name)
             });
-        }
         
         var transaction = await context.BeginTransactionAsync();
 
@@ -126,7 +107,7 @@ internal sealed class ProductService(IApplicationDbContext context, ITranslation
         
         await transaction.CommitAsync();
         
-        return ProductGet.Map(product);
+        return product.Id;
     }
 
     public async Task DeleteProductAsync(Guid id)
