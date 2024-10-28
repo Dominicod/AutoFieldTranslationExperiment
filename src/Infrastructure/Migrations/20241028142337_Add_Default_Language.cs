@@ -16,7 +16,7 @@ namespace Infrastructure.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.Sql("DELETE * FROM Languages WHERE Id = '1BC7D4F7-436F-4794-B264-BB1663CA6671'");
+            migrationBuilder.Sql("DELETE FROM Languages WHERE Id = '1BC7D4F7-436F-4794-B264-BB1663CA6671'");
         }
     }
 }
