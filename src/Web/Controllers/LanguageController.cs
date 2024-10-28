@@ -27,7 +27,7 @@ public class LanguageController(ILanguageService languageService, LanguageInform
     }
     
     [HttpPut]
-    [Route("/SetDefault/{languageId:guid}")]
+    [Route("[controller]/SetDefault/{languageId:guid}")]
     public async Task<IResult> SetDefault(Guid languageId)
     {
         await languageService.SetDefaultAsync(languageId);
