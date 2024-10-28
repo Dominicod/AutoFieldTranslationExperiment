@@ -5,6 +5,7 @@ using AutoFieldTranslationExperiment.Infrastructure.Data;
 using Domain;
 using FluentValidation;
 using Infrastructure;
+using Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace AutoFieldTranslationExperiment.Services;
@@ -15,7 +16,6 @@ public class LanguageService(IApplicationDbContext context, ITranslationService 
     {
         languageInformation.SupportedLanguages = await context.Languages
             .AsNoTracking()
-            .Select(i => LanguageGet.Map(i))
             .ToListAsync();
         
         var browserLanguage = languageInformation.SupportedLanguages.FirstOrDefault(i => i.Code == browserLanguageCode);

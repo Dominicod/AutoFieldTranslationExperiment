@@ -1,17 +1,14 @@
-using AutoFieldTranslationExperiment.DTOs.Language;
-using AutoFieldTranslationExperiment.DTOs.Translation;
+using System.ComponentModel.DataAnnotations;
 using AutoFieldTranslationExperiment.Infrastructure;
-using AutoFieldTranslationExperiment.Infrastructure.Data;
 using Azure;
 using Azure.AI.Translation.Text;
 using Domain;
 using Domain.Common;
-using FluentValidation;
-using Infrastructure;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Translation = Domain.Translation;
 
-namespace AutoFieldTranslationExperiment.Services;
+namespace Infrastructure.Services;
 
 public class TranslationService : ITranslationService
 {
@@ -28,16 +25,9 @@ public class TranslationService : ITranslationService
         _client = new TextTranslationClient(credential, region);
     }
 
-    public async Task<IEnumerable<TranslationGetSupported>> GetSupportedLanguagesAsync()
-    {
-        var languagesRes = await _client.GetLanguagesAsync(scope: "translation");
-        var languages = languagesRes.Value.Translation;
-        return languages.Select(l => new TranslationGetSupported(l.Key, l.Value.NativeName, l.Value.Name));
-    }
-
     public async Task<List<Translation>> TranslateAsync(List<Translation> translations, Language sourceLanguage, List<Language> targetLanguages)
     {
-        var source = sourceLanguage.Id == _languageInformation.CurrentBrowserLanguage.Id ? _languageInformation.CurrentBrowserLanguage : LanguageGet.Map(sourceLanguage);
+        var source = sourceLanguage.Id == _languageInformation.CurrentBrowserLanguage.Id ? _languageInformation.CurrentBrowserLanguage : sourceLanguage;
         
         if (translations.Any(i => i.Language.Code != source.Code))
             throw new ValidationException("Source language code does not match the language code of the translations");
