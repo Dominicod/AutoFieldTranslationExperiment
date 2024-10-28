@@ -58,8 +58,8 @@ public class LanguageService(IApplicationDbContext context, ITranslationService 
 
         await context.Languages.AddAsync(language);
         await context.SaveChangesAsync();
-
-        await translationService.TranslateAllEntitiesAsync(null, to: language);
+        
+        await translationService.AddTranslationForAllEntitiesAsync(null, to: language);
 
         return LanguageGet.Map(language);
     }

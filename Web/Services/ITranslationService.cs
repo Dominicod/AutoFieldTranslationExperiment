@@ -14,5 +14,5 @@ public interface ITranslationService
     
     public Task AddAlternateTranslationsForEntityAsync(TranslatableEntity entity, List<Translation> translation);
 
-    public Task TranslateAllEntitiesAsync(Language? from, Language to);
+    public Task AddTranslationForAllEntitiesAsync(Language? from, Language to);
 }

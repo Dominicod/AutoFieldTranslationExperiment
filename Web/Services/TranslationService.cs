@@ -1,4 +1,3 @@
-using Ardalis.GuardClauses;
 using AutoFieldTranslationExperiment.DTOs.Language;
 using AutoFieldTranslationExperiment.DTOs.Translation;
 using AutoFieldTranslationExperiment.Infrastructure;
@@ -37,38 +36,13 @@ public class TranslationService : ITranslationService
 
     public async Task<List<Translation>> TranslateAsync(List<Translation> translations, Language sourceLanguage, List<Language> targetLanguages)
     {
-        LanguageGet source;
-        
-        if (sourceLanguage.Id == _languageInformation.CurrentBrowserLanguage.Id)
-            source = _languageInformation.CurrentBrowserLanguage;
-        else
-        {
-            var language = await _context.Languages
-                .AsNoTracking()
-                .FirstOrDefaultAsync(l => l.Id == sourceLanguage.Id);
-            
-            Guard.Against.NotFound("Source Language", language, nameof(source));
-            
-            source = LanguageGet.Map(language);
-        }
-        
-        var targetIds = targetLanguages.Select(t => t.Id);
-        var targets = await _context.Languages
-            .AsNoTracking()
-            .Where(l => targetIds.Contains(l.Id))
-            .ToListAsync();
-        
-        if (targets.Count != targetLanguages.Count)
-        {
-            var missing = targetIds.Except(targets.Select(t => t.Id));
-            throw new NotFoundException("Language Targets", $"One or more target languages not found: {string.Join(", ", missing)}");
-        }
+        var source = sourceLanguage.Id == _languageInformation.CurrentBrowserLanguage.Id ? _languageInformation.CurrentBrowserLanguage : LanguageGet.Map(sourceLanguage);
         
         if (translations.Any(i => i.Language.Code != source.Code))
             throw new ValidationException("Source language code does not match the language code of the translations");
         
         var response = await _client.TranslateAsync(
-            targetLanguages: targets.Select(t => t.Code), 
+            targetLanguages: targetLanguages.Select(t => t.Code), 
             content: translations.Select(t => t.Value), 
             sourceLanguage: source.Code,
             textType: TextType.Plain,
@@ -89,7 +63,8 @@ public class TranslationService : ITranslationService
                     LanguageId = language.Id,
                     Language = language,
                     Value = newTranslation.Translations[j].Text,
-                    Key = prevTranslation.Key
+                    Key = prevTranslation.Key,
+                    ProductId = prevTranslation.ProductId
                 });
             }
         }
@@ -123,32 +98,33 @@ public class TranslationService : ITranslationService
             sourceLanguage: source, 
             targetLanguages: targets);
         
-        if (translatedTexts.Count != translations.Count)
-            throw new InvalidOperationException("Number of translations returned does not match the number of translations sent");
-        
         entity.Translations.AddRange(translatedTexts);
         
         await _context.SaveChangesAsync();
     }
 
-    public async Task TranslateAllEntitiesAsync(Language? from, Language to)
+    public async Task AddTranslationForAllEntitiesAsync(Language? from, Language to)
     {
+        // If no source language is provided, use the default language
+        var source = from ?? await _context.Languages.FirstAsync(i => i.IsDefault);
         var entities = await _context.Translations
-            .AsSplitQuery()
-            .Where(i => i.LanguageId != to.Id)
+            .Where(i => i.LanguageId == source.Id)
+            .Include(i => i.Language)
+            .AsNoTracking()
             .ToListAsync();
 
         if (entities.Count is 0)
             return;
-
-        // If no source language is provided, use the default language
-        var source = from ?? await _context.Languages.FirstAsync(i => i.IsDefault);
         
         var translations = await TranslateAsync(
             translations: entities, 
             sourceLanguage: source, 
             targetLanguages: [to]);
 
-        var test = "";
+        if (translations.Count != entities.Count)
+            throw new ValidationException("Number of translations returned does not match the number of translations sent");
+
+        _context.Translations.UpdateRange(translations);
+        await _context.SaveChangesAsync();
     }
 }
