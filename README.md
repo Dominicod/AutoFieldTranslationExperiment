@@ -13,7 +13,7 @@
 </p>
 
 <h2 id="overview">Route Overview</h2>
-For a extensive list of available API routes, please refer to the [API Documentation](https://github.com/Dominicod/AutoFieldTranslationExperiment/wiki/API-Documentation).
+For a extensive list of available API routes, please refer to the [API Documentation Wiki](https://github.com/Dominicod/AutoFieldTranslationExperiment/wiki/API-Documentation).
 
 This application also does support Swagger, which can be accessed at the root of the application when in development.
 (e.g. `https://localhost:7101/swagger`)
