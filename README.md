@@ -15,6 +15,9 @@
 <h2 id="overview">Route Overview</h2>
 For a extensive list of available API routes, please refer to the [API Documentation](https://github.com/Dominicod/AutoFieldTranslationExperiment/wiki/API-Documentation).
 
+This application also does support Swagger, which can be accessed at the root of the application when in development.
+(e.g. `https://localhost:7101/swagger`)
+
 <h2 id="architecture">Architecture</h2>
 
 This project is based on a semi-traditional "N-Layer" architecture. The project is divided into the following layers:
