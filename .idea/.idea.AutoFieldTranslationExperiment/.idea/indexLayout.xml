@@ -2,7 +2,9 @@
 <project version="4">
   <component name="UserContentModel">
     <attachedFolders />
-    <explicitIncludes />
+    <explicitIncludes>
+      <Path>.github/workflows/main_od-experiments.yml</Path>
+    </explicitIncludes>
     <explicitExcludes>
       <Path>src</Path>
     </explicitExcludes>
