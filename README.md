@@ -12,7 +12,26 @@
     <a href="#technologies">Technologies</a>
 </p>
 
-<h2 id="overview">Route Overview</h2>
+<h2 id="overview">Overview</h2>
+
+<p>
+Managing multilingual content can be challenging, especially when new languages are introduced. 
+Traditional approaches often leave gaps where new languages lack translations for existing content, 
+creating an inconsistent user experience and significant manual translation overhead.
+
+I have created this application
+to solve the above issue by leveraging Azure AI Translation to automatically generate translations for new content 
+and retroactively fill gaps when new languages are added.
+When a user creates or updates an entity, the application translates each field into all supported languages, 
+ensuring every piece of content is immediately accessible in all available languages. 
+Additionally, when a new language is added,
+the application translates all fields from the application’s set default language,
+removing the need for manual back-filling. 
+Users see content in their browser’s language if supported or default to English (en-US), 
+ensuring seamless multilingual accessibility.
+</p>
+
+<hr/>
 For a extensive list of available API routes, please refer to the wiki at: https://github.com/Dominicod/AutoFieldTranslationExperiment/wiki/API-Documentation.
 
 This application also does support Swagger, which can be accessed at the root of the application when in development.
