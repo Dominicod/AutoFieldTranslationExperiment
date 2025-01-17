@@ -56,3 +56,5 @@ app.UseHttpsRedirection();
 app.UseExceptionHandler(_ => { });
 app.MapGet("/api/health", () => "OK");
 app.Run();
+
+public partial class Program { };
