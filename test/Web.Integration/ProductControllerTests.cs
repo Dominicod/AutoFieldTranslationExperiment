@@ -4,6 +4,7 @@ namespace Web.Test;
 
 public class ProductControllerTests(IntegrationTestWebAppFactory factory) : BaseIntegrationTest(factory)
 {
+    //https://xunit.net/docs/shared-context#class-fixture
     public class GetAllMethod
     {
         [Fact]

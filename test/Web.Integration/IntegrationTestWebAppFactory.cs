@@ -19,8 +19,8 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
         builder.ConfigureServices(services =>
         {
             // Fetch ApplicationDbContext so we can replace it with TestContainers
-            var descriptor =
-                services.SingleOrDefault(d => d.ServiceType == typeof(DbContextOptions<ApplicationDbContext>));
+            var descriptor = services
+                    .SingleOrDefault(d => d.ServiceType == typeof(DbContextOptions<ApplicationDbContext>));
 
             if (descriptor is not null)
                 services.Remove(descriptor);
