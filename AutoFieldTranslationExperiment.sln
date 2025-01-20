@@ -16,7 +16,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "src\Domain\Domain
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "src\Infrastructure\Infrastructure.csproj", "{ABAAB19E-75D4-435A-9410-4707BBE57D8C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web.Integration", "Web.Integration\Web.Integration.csproj", "{F8BB8A80-6BF0-47C7-8ADC-CCC226216DCB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web.Integration", "test\Web.Integration\Web.Integration.csproj", "{F8BB8A80-6BF0-47C7-8ADC-CCC226216DCB}"
 EndProject
 EndProject
 Global
