@@ -2,9 +2,9 @@ using Xunit;
 
 namespace Web.Test;
 
-public class LanguageControllerTests(IntegrationTestWebAppFactory factory) : BaseIntegrationTest(factory)
+public class LanguageControllerTests
 {
-    public class GetAllMethod
+    public class GetAllMethod(IntegrationTestWebAppFactory factory) : BaseIntegrationTest(factory)
     {
         [Fact]
         public void Returns_AllLanguages()
@@ -24,7 +24,7 @@ public class LanguageControllerTests(IntegrationTestWebAppFactory factory) : Bas
         }
     }
 
-    public class AddMethod
+    public class AddMethod(IntegrationTestWebAppFactory factory) : BaseIntegrationTest(factory)
     {
         [Fact]
         public void Adds_Language()
@@ -45,7 +45,7 @@ public class LanguageControllerTests(IntegrationTestWebAppFactory factory) : Bas
         }
     }
 
-    public class SetDefaultMethod
+    public class SetDefaultMethod(IntegrationTestWebAppFactory factory) : BaseIntegrationTest(factory)
     {
         [Fact]
         public void Sets_DefaultLanguage()
@@ -72,7 +72,7 @@ public class LanguageControllerTests(IntegrationTestWebAppFactory factory) : Bas
         }
     }
 
-    public class RemoveMethod
+    public class RemoveMethod(IntegrationTestWebAppFactory factory) : BaseIntegrationTest(factory)
     {
         [Fact]
         public void Removes_Language()
