@@ -1,4 +1,5 @@
 using Infrastructure;
+using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
@@ -6,16 +7,15 @@ namespace Web.Test;
 
 public abstract class BaseIntegrationTest : IClassFixture<IntegrationTestWebAppFactory>
 {
-    private readonly IServiceScope _scope;
-    protected readonly IApplicationDbContext _context;
-    protected readonly HttpClient _client;
+    protected readonly IApplicationDbContext Context;
+    protected readonly HttpClient Client;
 
     protected BaseIntegrationTest(IntegrationTestWebAppFactory factory)
     {
         // Fetch and assign scopes for use in integration tests
-        _scope = factory.Services.CreateScope();
-        _context = _scope.ServiceProvider.GetRequiredService<IApplicationDbContext>();
-        _client = factory.CreateClient(new WebApplicationFactoryClientOptions
+        var scope = factory.Services.CreateScope();
+        Context = scope.ServiceProvider.GetRequiredService<IApplicationDbContext>();
+        Client = factory.CreateClient(new WebApplicationFactoryClientOptions
         {
             AllowAutoRedirect = false
         });
