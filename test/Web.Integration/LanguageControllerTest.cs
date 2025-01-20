@@ -2,15 +2,14 @@ using Xunit;
 
 namespace Web.Test;
 
-public class LanguageControllerTests
+public class LanguageControllerTest
 {
-    public class GetAllMethod(IntegrationTestWebAppFactory factory) : BaseIntegrationTest(factory)
+    public class GetAllMethod
     {
         [Fact]
         public void Returns_AllLanguages()
         {
             // Arrange
-            var response = Client.GetAsync("/api/language");
 
             // Act
 
@@ -24,7 +23,7 @@ public class LanguageControllerTests
         }
     }
 
-    public class AddMethod(IntegrationTestWebAppFactory factory) : BaseIntegrationTest(factory)
+    public class AddMethod
     {
         [Fact]
         public void Adds_Language()
@@ -45,7 +44,7 @@ public class LanguageControllerTests
         }
     }
 
-    public class SetDefaultMethod(IntegrationTestWebAppFactory factory) : BaseIntegrationTest(factory)
+    public class SetDefaultMethod
     {
         [Fact]
         public void Sets_DefaultLanguage()
@@ -72,7 +71,7 @@ public class LanguageControllerTests
         }
     }
 
-    public class RemoveMethod(IntegrationTestWebAppFactory factory) : BaseIntegrationTest(factory)
+    public class RemoveMethod
     {
         [Fact]
         public void Removes_Language()

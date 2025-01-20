@@ -2,9 +2,9 @@ using Xunit;
 
 namespace Web.Test;
 
-public class ProductControllerTests
+public class ProductControllerTest
 {
-    public class GetAllMethod(IntegrationTestWebAppFactory factory) : BaseIntegrationTest(factory)
+    public class GetAllMethod
     {
         [Fact]
         public void Returns_AllProducts()
@@ -19,7 +19,7 @@ public class ProductControllerTests
         }
     }
 
-    public class GetMethod(IntegrationTestWebAppFactory factory) : BaseIntegrationTest(factory)
+    public class GetMethod
     {
         [Fact]
         public void Returns_Product_WhenExists()
@@ -40,7 +40,7 @@ public class ProductControllerTests
         }
     }
 
-    public class CreateMethod(IntegrationTestWebAppFactory factory) : BaseIntegrationTest(factory)
+    public class CreateMethod
     {
         [Fact]
         public void Creates_Product()
@@ -61,7 +61,7 @@ public class ProductControllerTests
         }
     }
 
-    public class UpdateMethod(IntegrationTestWebAppFactory factory) : BaseIntegrationTest(factory)
+    public class UpdateMethod
     {
         [Fact]
         public void Updates_Product()
@@ -82,7 +82,7 @@ public class ProductControllerTests
         }
     }
 
-    public class DeleteMethod(IntegrationTestWebAppFactory factory) : BaseIntegrationTest(factory)
+    public class DeleteMethod
     {
         [Fact]
         public void Deletes_Product()
