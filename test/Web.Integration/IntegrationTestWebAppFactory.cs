@@ -13,7 +13,7 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
     private readonly MsSqlContainer _msSqlContainer = new MsSqlBuilder()
         .WithImage("mcr.microsoft.com/mssql/server:2022-latest")
         .Build();
-    
+
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.ConfigureServices(services =>
@@ -30,6 +30,18 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
             {
                 options.UseSqlServer(_msSqlContainer.GetConnectionString());
             });
+
+            var serviceProvider = services.BuildServiceProvider();
+
+            // Create a scope to obtain a reference to the database context
+            using (var scope = serviceProvider.CreateScope())
+            {
+                var scopedServices = scope.ServiceProvider;
+                var db = scopedServices.GetRequiredService<ApplicationDbContext>();
+
+                // Apply migrations so we can then seed the database in tests
+                db.Database.Migrate();
+            }
         });
     }
 

@@ -44,12 +44,12 @@ public class LanguageService(IApplicationDbContext context, ITranslationService 
         if (string.IsNullOrEmpty(request.Code))
             throw new ValidationException("Language code cannot be empty");
 
-        var releventData = await context.Languages
+        var relevantData = await context.Languages
             .Where(language => language.Code == request.Code || language.IsDefault)
             .AsNoTracking()
             .ToListAsync();
 
-        if (releventData.Any(i => i.Code == request.Code))
+        if (relevantData.Any(i => i.Code == request.Code))
             throw new ValidationException("Language with this code already exists");
 
         var language = new Language
@@ -58,7 +58,7 @@ public class LanguageService(IApplicationDbContext context, ITranslationService 
             IsDefault = false
         };
 
-        if (!releventData.Any(i => i.IsDefault))
+        if (!relevantData.Any(i => i.IsDefault))
             language.IsDefault = true;
 
         await context.Languages.AddAsync(language);
