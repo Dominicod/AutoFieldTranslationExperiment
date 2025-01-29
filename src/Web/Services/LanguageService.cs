@@ -17,11 +17,11 @@ public class LanguageService(IApplicationDbContext context, ITranslationService 
         languageInformation.SupportedLanguages = await context.Languages
             .AsNoTracking()
             .ToListAsync();
-        
+
         var browserLanguage = languageInformation.SupportedLanguages.FirstOrDefault(i => i.Code == browserLanguageCode);
-        
+
         Guard.Against.NotFound("Language", browserLanguage, nameof(browserLanguage));
-        
+
         languageInformation.CurrentBrowserLanguage = browserLanguage;
     }
 
@@ -33,9 +33,9 @@ public class LanguageService(IApplicationDbContext context, ITranslationService 
         var language = await context.Languages
             .AsNoTracking()
             .FirstOrDefaultAsync(i => i.Code == languageCode);
-        
+
         Guard.Against.NotFound("Language", language, nameof(language));
-        
+
         return LanguageGet.Map(language);
     }
 
@@ -44,22 +44,26 @@ public class LanguageService(IApplicationDbContext context, ITranslationService 
         if (string.IsNullOrEmpty(request.Code))
             throw new ValidationException("Language code cannot be empty");
 
+        var releventData = await context.Languages
+            .Where(language => language.Code == request.Code || language.IsDefault)
+            .AsNoTracking()
+            .ToListAsync();
+
+        if (releventData.Any(i => i.Code == request.Code))
+            throw new ValidationException("Language with this code already exists");
+
         var language = new Language
         {
             Code = request.Code,
             IsDefault = false
         };
-        
-        var defaultExists = await context.Languages
-            .AsNoTracking()
-            .AnyAsync(i => i.IsDefault);
-        
-        if (!defaultExists)
+
+        if (!releventData.Any(i => i.IsDefault))
             language.IsDefault = true;
 
         await context.Languages.AddAsync(language);
         await context.SaveChangesAsync();
-        
+
         await translationService.AddTranslationForAllEntitiesAsync(null, to: language);
 
         return language.Id;
@@ -68,24 +72,24 @@ public class LanguageService(IApplicationDbContext context, ITranslationService 
     public async Task<bool> SetDefaultAsync(Guid languageId)
     {
         var language = await context.Languages.FindAsync(languageId);
-        
+
         Guard.Against.NotFound("Language", language, nameof(language));
-        
+
         if (language.IsDefault)
             throw new ValidationException("Language is already default");
-        
+
         var currentDefaultLanguage = await context.Languages.FirstOrDefaultAsync(i => i.IsDefault);
-        
+
         if (currentDefaultLanguage is not null)
         {
             currentDefaultLanguage.IsDefault = false;
             context.Languages.Update(currentDefaultLanguage);
         }
-        
+
         language.IsDefault = true;
         context.Languages.Update(language);
         await context.SaveChangesAsync();
-        
+
         return true;
     }
 
@@ -97,7 +101,7 @@ public class LanguageService(IApplicationDbContext context, ITranslationService 
         var language = await context.Languages.FindAsync(id);
 
         Guard.Against.NotFound("Language", language, nameof(language));
-        
+
         if (language.IsDefault)
             throw new ValidationException("Cannot remove default language, set another language as default first");
 
