@@ -1,5 +1,4 @@
 using AutoFieldTranslationExperiment.DTOs.Language;
-using AutoFieldTranslationExperiment.Infrastructure;
 using AutoFieldTranslationExperiment.Services;
 using Infrastructure;
 using Microsoft.AspNetCore.Mvc;
@@ -25,7 +24,7 @@ public class LanguageController(ILanguageService languageService, LanguageInform
         var id = await languageService.AddLanguageAsync(request);
         return Results.Created(string.Empty, id);
     }
-    
+
     [HttpPut]
     [Route("[action]/{languageId:guid}")]
     public async Task<IResult> SetDefault(Guid languageId)
