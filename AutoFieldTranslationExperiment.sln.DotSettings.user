@@ -5,7 +5,12 @@
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=91636bcb_002D6b9a_002D420f_002D999f_002Dfe0b1d09b214/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="Returns_AllProducts" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
   &lt;Project Location="/Users/dominicodonnell/Dev/PERSONAL/AutoFieldTranslationExperiment/test/Web.Integration" Presentation="&amp;lt;test&amp;gt;\&amp;lt;Web.Integration&amp;gt;" /&gt;
 &lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=f478eb2c_002D0fd8_002D4e75_002D9b3f_002D33713a1fb14b/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="AddMethod" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=94ce6ecd_002D13e7_002D4dff_002Dbfc9_002De6301d5b749a/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="Adds_Language" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+  &lt;TestAncestor&gt;
+    &lt;TestId&gt;xUnit::F8BB8A80-6BF0-47C7-8ADC-CCC226216DCB::net8.0::Web.Test.LanguageControllerTest&lt;/TestId&gt;
+  &lt;/TestAncestor&gt;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=f478eb2c_002D0fd8_002D4e75_002D9b3f_002D33713a1fb14b/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="AddMethod" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
   &lt;TestAncestor&gt;
     &lt;TestId&gt;xUnit::F8BB8A80-6BF0-47C7-8ADC-CCC226216DCB::net8.0::Web.Test.LanguageControllerTest&lt;/TestId&gt;
   &lt;/TestAncestor&gt;
