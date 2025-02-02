@@ -4,3 +4,6 @@ obj/
 riderModule.iml
 /_ReSharper.Caches/
 secrets.json
+.idea
+.zed
+.DS_Store
