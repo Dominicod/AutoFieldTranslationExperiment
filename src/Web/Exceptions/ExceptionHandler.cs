@@ -45,12 +45,13 @@ internal sealed class ExceptionHandler : IExceptionHandler
         var exception = (ValidationException)ex;
 
         httpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
-
-        await httpContext.Response.WriteAsJsonAsync(new ValidationProblemDetails(exception.Errors
-            .ToDictionary(e => e.PropertyName, e => new[] { e.ErrorMessage }))
+        
+        await httpContext.Response.WriteAsJsonAsync(new ProblemDetails
         {
             Status = StatusCodes.Status400BadRequest,
-            Type = "https://tools.ietf.org/html/rfc7231#section-6.5.1"
+            Type = "https://tools.ietf.org/html/rfc7231#section-6.5.1",
+            Title = "Bad Request",
+            Detail = exception.Message
         });
     }
 
